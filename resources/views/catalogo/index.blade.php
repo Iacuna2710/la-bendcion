@@ -61,19 +61,62 @@
             <h2 class="fw-bold text-lb-verde">Explora por categoría</h2>
             <p class="text-muted">Encuentra lo que buscas de manera fácil</p>
         </div>
-        <div class="row g-3 justify-content-center">
-            @foreach($categorias->take(6) as $categoria)
-                <div class="col-6 col-md-4 col-lg-2">
-                    <a href="{{ route('catalogo.index', ['categoria' => $categoria->slug]) }}"
-                       class="lb-categoria-card text-center text-decoration-none d-block p-3 rounded-3 h-100">
-                        <div class="lb-cat-icon mb-2">🌿</div>
-                        <div class="fw-semibold small text-dark">{{ $categoria->nombre }}</div>
-                        <div class="text-muted" style="font-size: 0.72rem;">
-                            {{ $categoria->productos_count }} producto{{ $categoria->productos_count !== 1 ? 's' : '' }}
-                        </div>
-                    </a>
-                </div>
-            @endforeach
+
+        {{-- Carrusel de categorías --}}
+        <div class="lb-cat-carousel-wrapper position-relative">
+
+            {{-- Flecha izquierda --}}
+            <button class="lb-cat-arrow lb-cat-arrow-left" id="catPrev" aria-label="Anterior">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+            {{-- Track deslizable --}}
+            <div class="lb-cat-track" id="catTrack">
+                @foreach($categorias as $categoria)
+                    @php
+                        $emojis = [
+                            'capsulas'     => '💊',
+                            'gotas'        => '💧',
+                            'jarabes'      => '🍶',
+                            'infusiones'   => '🍵',
+                            'aceites'      => '🫒',
+                            'aromaterapia' => '🌸',
+                            'jabones'      => '🧼',
+                            'shampoos'     => '🧴',
+                            'unguentos'    => '🏺',
+                            'granos'       => '🌾',
+                            'cereales'     => '🌾',
+                            'semillas'     => '🌱',
+                            'frutos'       => '🥜',
+                            'suplementos'  => '💪',
+                            'deportivos'   => '💪',
+                        ];
+                        $slugLower = strtolower($categoria->slug);
+                        $emoji = '🌿';
+                        foreach ($emojis as $clave => $icono) {
+                            if (str_contains($slugLower, $clave)) {
+                                $emoji = $icono;
+                                break;
+                            }
+                        }
+                    @endphp
+                    <div class="lb-cat-item">
+                        <a href="{{ route('catalogo.index', ['categoria' => $categoria->slug]) }}"
+                           class="lb-categoria-card text-center text-decoration-none d-block p-3 rounded-3 h-100">
+                            <div class="lb-cat-icon mb-2">{{ $emoji }}</div>
+                            <div class="fw-semibold small text-dark">{{ $categoria->nombre }}</div>
+                            <div class="text-muted" style="font-size: 0.72rem;">
+                                {{ $categoria->productos_count }} producto{{ $categoria->productos_count !== 1 ? 's' : '' }}
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Flecha derecha --}}
+            <button class="lb-cat-arrow lb-cat-arrow-right" id="catNext" aria-label="Siguiente">
+                <i class="bi bi-chevron-right"></i>
+            </button>
         </div>
     </div>
 </section>
@@ -201,7 +244,31 @@
         50%       { transform: translateY(-12px); }
     }
 
-    /* ── Categorías ─────────────────────────────────────────────────────── */
+    /* ── Categorías — carrusel ───────────────────────────────────────────── */
+    .lb-cat-carousel-wrapper {
+        padding: 0 2.5rem;          /* espacio para las flechas */
+    }
+    .lb-cat-track {
+        display: flex;
+        gap: 0.75rem;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;       /* Firefox */
+        padding-bottom: 4px;         /* evita cortar sombras */
+    }
+    .lb-cat-track::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+    .lb-cat-item {
+        /* 6 visibles en Desktop, 3 en Tablet, 2 en Móvil */
+        flex: 0 0 calc((100% - 5 * 0.75rem) / 6);
+        min-width: 110px;
+    }
+    @media (max-width: 991.98px) {
+        .lb-cat-item { flex: 0 0 calc((100% - 2 * 0.75rem) / 3); }
+    }
+    @media (max-width: 575.98px) {
+        .lb-cat-item { flex: 0 0 calc((100% - 0.75rem) / 2); }
+    }
     .lb-categoria-card {
         border: 1.5px solid #e9ecef; transition: all 0.25s;
         background-color: #fafffe;
@@ -213,6 +280,25 @@
         box-shadow: 0 6px 18px rgba(45,106,79,0.1);
     }
     .lb-cat-icon { font-size: 1.8rem; }
+    /* Flechas de navegación */
+    .lb-cat-arrow {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        z-index: 2;
+        width: 2rem; height: 2rem;
+        display: flex; align-items: center; justify-content: center;
+        background: white;
+        border: 1.5px solid #dee2e6;
+        border-radius: 50%;
+        color: #2d6a4f;
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 0;
+        line-height: 1;
+    }
+    .lb-cat-arrow:hover { background: #f0faf4; border-color: #74c69d; }
+    .lb-cat-arrow.disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+    .lb-cat-arrow-left  { left: 0; }
+    .lb-cat-arrow-right { right: 0; }
     .text-lb-verde { color: #1b4332; }
 
     /* ── Tarjetas de producto ─────────────────────────────────────────────── */
@@ -246,4 +332,40 @@
     }
     .lb-btn-agregar:hover { background-color: #1b4332; border-color: #1b4332; color: white; }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+(function () {
+    const track  = document.getElementById('catTrack');
+    const btnPrev = document.getElementById('catPrev');
+    const btnNext = document.getElementById('catNext');
+
+    if (!track || !btnPrev || !btnNext) return;
+
+    // Desplazamiento equivalente al ancho visible del track
+    function scrollAmount() {
+        return track.clientWidth * 0.8;
+    }
+
+    function updateArrows() {
+        btnPrev.classList.toggle('disabled', track.scrollLeft <= 2);
+        btnNext.classList.toggle('disabled',
+            track.scrollLeft + track.clientWidth >= track.scrollWidth - 2);
+    }
+
+    btnPrev.addEventListener('click', function () {
+        track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
+    });
+
+    btnNext.addEventListener('click', function () {
+        track.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
+    });
+
+    track.addEventListener('scroll', updateArrows, { passive: true });
+
+    // Estado inicial
+    updateArrows();
+})();
+</script>
 @endpush

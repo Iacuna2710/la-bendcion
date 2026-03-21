@@ -136,7 +136,7 @@ class CatalogoController extends Controller
 
         $relacionados = Producto::with(['imagenPrincipal'])
             ->whereHas('categorias', function ($q) use ($categoriasIds) {
-                $q->whereIn('id_categoria', $categoriasIds);
+                $q->whereIn('categorias.id_categoria', $categoriasIds);
             })
             ->where('id_producto', '!=', $producto->id_producto)
             ->where('stock', '>', 0)
