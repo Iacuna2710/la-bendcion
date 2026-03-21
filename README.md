@@ -1,6 +1,6 @@
-# 🌿 La Bendición — Plataforma Web Macrobiótica
+# 🌿 La Bendición 
 
-Plataforma web de comercialización de productos macrobióticos desarrollada con Laravel 12, Bootstrap 5 y MySQL. Proyecto universitario.
+Plataforma web de comercialización de productos macrobióticos desarrollada con Laravel 12, Bootstrap 5 y MySQL.
 
 ---
 
@@ -198,5 +198,11 @@ la-bendicion/
 
 ## 👨‍💻 Equipo de desarrollo
 
-Proyecto universitario — Sistema de Información  
+Pablo Andrés Castillo Zuñiga
+Marcelo Quevedo Ramírez
+Erick Daniel Valverde Durán
+Fabricio José Quesada Araya
+Isaac Gilberto Acuña León
+
+Proyecto Ambiente Web - Universidad Fidelitas
 Plataforma web para La Bendición, tienda de productos macrobióticos en Costa Rica.
