@@ -67,8 +67,8 @@ DB_PASSWORD=
 MAIL_MAILER=smtp
 MAIL_HOST=sandbox.smtp.mailtrap.io
 MAIL_PORT=2525
-MAIL_USERNAME=tu_usuario_mailtrap
-MAIL_PASSWORD=tu_password_mailtrap
+MAIL_USERNAME=df49bcd264a3bd
+MAIL_PASSWORD=653cc3e4fba699
 MAIL_FROM_ADDRESS="noreply@labendicion.cr"
 MAIL_FROM_NAME="La Bendición"
 ```
