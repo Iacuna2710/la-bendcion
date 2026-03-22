@@ -14,18 +14,14 @@ use Illuminate\View\View;
 /**
  * ProductoAdminController
  *
- * CRUD completo de productos para el panel administrativo (RF-13).
+ * CRUD completo de productos para el panel administrativo.
  * Gestiona nombre, precio, stock, SKU, categorías e imágenes.
  * La eliminación es siempre lógica usando SoftDeletes (deleted_at).
  */
 class ProductoAdminController extends Controller
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // index — Listado de productos
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
-     * Muestra el listado paginado de productos con buscador.
+     * Muestra listado paginado de productos con buscador.
      */
     public function index(Request $request): View
     {
@@ -46,22 +42,14 @@ class ProductoAdminController extends Controller
         return view('admin.productos.index', compact('productos', 'busqueda', 'productosStockBajo'));
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // create — Formulario de nuevo producto
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
-     * Muestra el formulario para crear un nuevo producto.
+     * Muestra formulario para crear un nuevo producto.
      */
     public function create(): View
     {
         $categorias = Categoria::where('is_active', true)->orderBy('nombre')->get();
         return view('admin.productos.form', compact('categorias'));
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // store — Guardar nuevo producto
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Valida y guarda un nuevo producto con sus categorías e imágenes.
@@ -100,21 +88,13 @@ class ProductoAdminController extends Controller
             ->with('success', "Producto «{$producto->nombre}» creado correctamente.");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // show — Ver detalle de un producto (redirige al edit)
-    // ─────────────────────────────────────────────────────────────────────────
-
     public function show(int $id_producto): RedirectResponse
     {
         return redirect()->route('admin.productos.edit', $id_producto);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // edit — Formulario de edición
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
-     * Muestra el formulario para editar un producto existente.
+     * Muestra formulario para editar un producto existente.
      *
      * @param  int  $id_producto
      * @return \Illuminate\View\View
@@ -129,10 +109,6 @@ class ProductoAdminController extends Controller
 
         return view('admin.productos.form', compact('producto', 'categorias', 'categoriasSeleccionadas'));
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // update — Actualizar producto
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Valida y actualiza los datos de un producto existente.
@@ -193,10 +169,6 @@ class ProductoAdminController extends Controller
             ->with('success', "Producto «{$producto->nombre}» actualizado correctamente.");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // destroy — Eliminación lógica del producto
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
      * Realiza la eliminación lógica de un producto (soft delete con deleted_at).
      *
@@ -214,10 +186,6 @@ class ProductoAdminController extends Controller
         return redirect()->route('admin.productos.index')
             ->with('success', "Producto «{$nombre}» eliminado correctamente.");
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Métodos privados auxiliares
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Valida los campos del formulario de producto.

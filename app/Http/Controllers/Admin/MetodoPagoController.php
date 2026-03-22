@@ -15,17 +15,26 @@ use Illuminate\View\View;
  */
 class MetodoPagoController extends Controller
 {
+    /**
+     * Muestra listado de métodos de pago.
+     */
     public function index(): View
     {
         $metodosPago = MetodoPago::orderBy('nombre')->get();
         return view('admin.metodos-pago.index', compact('metodosPago'));
     }
 
+    /**
+     * Muestra formulario para crear un nuevo método de pago.
+     */
     public function create(): View
     {
         return view('admin.metodos-pago.form');
     }
 
+    /**
+     * Guarda un nuevo método de pago.
+     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -46,17 +55,26 @@ class MetodoPagoController extends Controller
             ->with('success', 'Método de pago creado correctamente.');
     }
 
+    /**
+     * Redirige a la vista de edición.
+     */
     public function show(int $id_met_pago): RedirectResponse
     {
         return redirect()->route('admin.metodos-pago.edit', $id_met_pago);
     }
 
+    /**
+     * Muestra formulario para editar un método de pago.
+     */
     public function edit(int $id_met_pago): View
     {
         $metodo = MetodoPago::findOrFail($id_met_pago);
         return view('admin.metodos-pago.form', compact('metodo'));
     }
 
+    /**
+     * Actualiza un método de pago.
+     */
     public function update(Request $request, int $id_met_pago): RedirectResponse
     {
         $request->validate([
@@ -79,6 +97,9 @@ class MetodoPagoController extends Controller
             ->with('success', "Método «{$metodo->nombre}» actualizado correctamente.");
     }
 
+    /**
+     * Elimina un método de pago (desactivación lógica).
+     */
     public function destroy(int $id_met_pago): RedirectResponse
     {
         $metodo = MetodoPago::findOrFail($id_met_pago);

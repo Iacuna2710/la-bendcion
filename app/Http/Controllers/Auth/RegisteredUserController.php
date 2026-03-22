@@ -16,7 +16,7 @@ use Illuminate\View\View;
 class RegisteredUserController extends Controller
 {
     /**
-     * Muestra el formulario de registro.
+     * Muestra formulario de registro.
      */
     public function create(): View
     {
@@ -24,11 +24,11 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Procesa el registro de un nuevo usuario.
-     * — Crea el usuario con los campos personalizados de la tabla `users`.
-     * — Asigna automáticamente el rol 'cliente'.
-     * — Verifica el correo inmediatamente (sin flujo de verificación por email).
-     * — Inicia sesión y redirige al catálogo.
+     * Procesa registro de un nuevo usuario.
+     * Crea el usuario con los campos personalizados de la tabla `users`.
+     * Asigna automáticamente el rol 'cliente'.
+     * Verifica el correo inmediatamente (sin flujo de verificación por email).
+     * Inicia sesión y redirige al catálogo.
      *
      * @throws \Illuminate\Validation\ValidationException
      */

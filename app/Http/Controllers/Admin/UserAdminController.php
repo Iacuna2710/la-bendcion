@@ -29,8 +29,10 @@ class UserAdminController extends Controller
 
         $usuarios = User::with('roles')
             ->when($busqueda, function ($query, $busqueda) {
-                $query->where('nombre', 'like', "%{$busqueda}%")
+                $query->where(function ($q) use ($busqueda) {
+                    $q->where('nombre', 'like', "%{$busqueda}%")
                       ->orWhere('email', 'like', "%{$busqueda}%");
+                });
             })
             ->when($rolFiltro, function ($query, $rolFiltro) {
                 $query->whereHas('roles', fn($q) => $q->where('nombre', $rolFiltro));
@@ -181,9 +183,7 @@ class UserAdminController extends Controller
             ->with('success', "Usuario «{$nombre}» eliminado correctamente.");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Acciones rápidas
-    // ─────────────────────────────────────────────────────────────────────────
+
 
     /**
      * Activa o desactiva rápidamente un usuario (toggle is_active).

@@ -17,7 +17,7 @@ use Illuminate\View\View;
  * PasswordTemporalController
  *
  * Maneja el flujo completo de restablecimiento de contraseña mediante
- * contraseña temporal (RF-04):
+ * contraseña temporal:
  *
  *  1. mostrarFormulario()         → vista para que el usuario ingrese su correo
  *  2. enviarPasswordTemporal()    → genera la contraseña temporal y la envía por email
@@ -26,12 +26,9 @@ use Illuminate\View\View;
  */
 class PasswordTemporalController extends Controller
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // Paso 1 — Mostrar formulario para solicitar el correo
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Muestra el formulario donde el usuario ingresa su correo electrónico
+     * Muestra formulario donde el usuario ingresa su correo electrónico
      * para solicitar una contraseña temporal.
      */
     public function mostrarFormulario(): View
@@ -39,12 +36,8 @@ class PasswordTemporalController extends Controller
         return view('auth.forgot-password-custom');
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Paso 2 — Generar contraseña temporal y enviarla por email
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
-     * Procesa el correo ingresado, genera una contraseña temporal alfanumérica
+     * Procesa correo ingresado, genera una contraseña temporal alfanumérica
      * mínima de 8 caracteres y la envía al usuario por SMTP.
      *
      * Por seguridad, siempre se muestra el mismo mensaje genérico
@@ -60,7 +53,7 @@ class PasswordTemporalController extends Controller
             'email.email'    => 'Ingresa un correo electrónico válido.',
         ]);
 
-        // Buscar el usuario en la base de datos
+        // Buscar usuario en la base de datos
         $usuario = User::where('email', $request->email)->first();
 
         // Por seguridad no revelamos si el correo existe o no
@@ -82,12 +75,8 @@ class PasswordTemporalController extends Controller
         return back()->with('status', 'Si tu correo está registrado recibirás las instrucciones en breve.');
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Paso 3 — Mostrar formulario para establecer la nueva contraseña
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
-     * Muestra el formulario para que el usuario ingrese su nueva contraseña
+     * Muestra formulario para que el usuario ingrese su nueva contraseña
      * permanente. Solo accesible con sesión activa y password_es_temporal = true.
      */
     public function mostrarFormularioNueva(): View|RedirectResponse
@@ -102,10 +91,6 @@ class PasswordTemporalController extends Controller
 
         return view('auth.nueva-password');
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Paso 4 — Guardar la nueva contraseña permanente
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Valida y guarda la nueva contraseña permanente del usuario.

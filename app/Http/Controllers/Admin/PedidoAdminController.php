@@ -23,7 +23,7 @@ use Illuminate\View\View;
 class PedidoAdminController extends Controller
 {
     /**
-     * Muestra el listado paginado de pedidos con filtros.
+     * Muestra listado paginado de pedidos con filtros.
      */
     public function index(Request $request): View
     {
@@ -48,7 +48,7 @@ class PedidoAdminController extends Controller
     }
 
     /**
-     * Muestra el detalle completo de un pedido.
+     * Muestra detalle completo de un pedido.
      *
      * @param  int  $id_pedido
      */
@@ -98,10 +98,6 @@ class PedidoAdminController extends Controller
         return redirect()->route('admin.pedidos.index')
             ->with('success', "Pedido {$pedido->num_pedido} eliminado correctamente.");
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // cambiarEstado — Cambio de estado + notificación por correo
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Cambia el estado de un pedido llamando al SP sp_cambiar_estado_pedido.

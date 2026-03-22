@@ -12,13 +12,13 @@ use Illuminate\View\View;
 /**
  * CategoriaController
  *
- * CRUD completo de categorías para el panel administrativo (RF-14).
+ * CRUD completo de categorías para el panel administrativo.
  * El slug se genera automáticamente del nombre si no se proporciona.
  */
 class CategoriaController extends Controller
 {
     /**
-     * Muestra el listado paginado de categorías con buscador.
+     * Muestra listado paginado de categorías con buscador.
      */
     public function index(Request $request): View
     {
@@ -36,7 +36,7 @@ class CategoriaController extends Controller
     }
 
     /**
-     * Muestra el formulario para crear una nueva categoría.
+     * Muestra formulario para crear una nueva categoría.
      */
     public function create(): View
     {
@@ -76,7 +76,7 @@ class CategoriaController extends Controller
     }
 
     /**
-     * Muestra el formulario para editar una categoría existente.
+     * Muestra formulario para editar una categoría existente.
      *
      * @param  int  $id_categoria
      */
