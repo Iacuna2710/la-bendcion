@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Autentica las credenciales (lanza excepción si son incorrectas)
+        // Autentica las credenciales y lanza excepción si son incorrectas
         $request->authenticate();
 
         $request->session()->regenerate();
@@ -55,7 +55,7 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Cierra la sesión del usuario autenticado.
+     * Cierra sesión del usuario autenticado.
      */
     public function destroy(Request $request): RedirectResponse
     {

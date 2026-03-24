@@ -7,29 +7,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-/**
- * Modelo User — adaptado a la tabla `users` de La Bendición.
- * Clave primaria personalizada: id_user.
- * Soporte de eliminación lógica con deleted_at.
- */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Configuración de tabla y clave primaria personalizada
-    // ────────────────────────────────────────────────────────────────────────
-
-    /** Nombre de la tabla en la base de datos */
     protected $table = 'users';
 
-    /** Clave primaria personalizada (no sigue la convención 'id' de Laravel) */
     protected $primaryKey = 'id_user';
-
-    // ────────────────────────────────────────────────────────────────────────
-    // Atributos asignables masivamente
-    // ────────────────────────────────────────────────────────────────────────
 
     protected $fillable = [
         'nombre',
@@ -42,18 +27,10 @@ class User extends Authenticatable
         'email_verified_at',
     ];
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Atributos ocultos en la serialización
-    // ────────────────────────────────────────────────────────────────────────
-
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
-    // ────────────────────────────────────────────────────────────────────────
-    // Casts de atributos
-    // ────────────────────────────────────────────────────────────────────────
 
     protected function casts(): array
     {
@@ -65,51 +42,31 @@ class User extends Authenticatable
         ];
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Relaciones
-    // ────────────────────────────────────────────────────────────────────────
-
-    /**
-     * Un usuario puede tener múltiples roles.
-     * Tabla pivote: user_roles | FK del usuario: id_user | FK del rol: id_roles
-     */
     public function roles()
     {
         return $this->belongsToMany(
             Rol::class,
-            'user_roles',   // tabla pivote
-            'id_user',      // FK que apunta a este modelo en la pivote
-            'id_roles'      // FK que apunta al modelo relacionado en la pivote
+            'user_roles',
+            'id_user',
+            'id_roles'
         );
     }
 
-    /**
-     * Un usuario tiene exactamente un carrito persistente.
-     */
     public function carrito()
     {
         return $this->hasOne(Carrito::class, 'id_user', 'id_user');
     }
 
-    /**
-     * Un usuario puede tener muchos pedidos.
-     */
     public function pedidos()
     {
         return $this->hasMany(Pedido::class, 'id_user', 'id_user');
     }
 
-    /**
-     * Un usuario puede tener muchas direcciones de entrega.
-     */
     public function direcciones()
     {
         return $this->hasMany(Direccion::class, 'id_user', 'id_user');
     }
-
-    // ────────────────────────────────────────────────────────────────────────
-    // Métodos auxiliares
-    // ────────────────────────────────────────────────────────────────────────
+    
 
     /**
      * Verifica si el usuario tiene un rol específico.

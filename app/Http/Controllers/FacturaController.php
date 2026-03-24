@@ -28,8 +28,8 @@ class FacturaController extends Controller
     {
         $usuario = Auth::user();
 
-        // Cargar la factura con todos sus datos relacionados
-        // Verificar que la factura corresponda a un pedido del usuario autenticado
+        // Carga la factura con todos sus datos relacionados
+        // Verifica que la factura corresponda a un pedido del usuario autenticado
         $factura = Factura::with([
                 'pedido.estadoPedido',
                 'pedido.direccion.distrito.canton.provincia',

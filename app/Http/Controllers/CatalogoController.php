@@ -15,9 +15,6 @@ use Illuminate\View\View;
  */
 class CatalogoController extends Controller
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // Página de inicio — productos destacados (RF-05)
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Página de inicio con productos destacados y categorías activas.
@@ -49,10 +46,6 @@ class CatalogoController extends Controller
         return view('catalogo.index', compact('productosDestacados', 'categorias', 'productosNuevos'));
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Catálogo completo con filtros y paginación (RF-05, RF-06)
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
      * Catálogo completo con búsqueda por nombre y filtro por categoría.
      * Paginación de 12 productos por página.
@@ -64,11 +57,11 @@ class CatalogoController extends Controller
         $busqueda   = $request->input('buscar');
         $categoriaSlug = $request->input('categoria');
 
-        // Construir la consulta base
+        // Construye la consulta base
         $query = Producto::with(['imagenPrincipal', 'categorias'])
             ->where('stock', '>', 0);
 
-        // Filtro por búsqueda de texto (RF-06)
+        // Filtro por búsqueda de texto
         if ($busqueda) {
             $query->where(function ($q) use ($busqueda) {
                 $q->where('nombre', 'like', "%{$busqueda}%")
@@ -84,7 +77,7 @@ class CatalogoController extends Controller
             });
         }
 
-        // Ordenar y paginar — mantener filtros en la URL de paginación
+        // Ordena y pagina — mantiene filtros en la URL de paginación
         $productos = $query->orderBy('nombre')
             ->paginate(12)
             ->appends([
@@ -111,9 +104,6 @@ class CatalogoController extends Controller
         ));
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Detalle de un producto (RF-07)
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Muestra el detalle completo de un producto: nombre, precio, descripción,

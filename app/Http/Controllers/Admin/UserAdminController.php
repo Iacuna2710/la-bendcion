@@ -20,7 +20,7 @@ use Illuminate\View\View;
 class UserAdminController extends Controller
 {
     /**
-     * Muestra el listado paginado de usuarios con buscador y filtro por rol.
+     * Muestra listado paginado de usuarios con buscador y filtro por rol.
      */
     public function index(Request $request): View
     {
@@ -47,7 +47,7 @@ class UserAdminController extends Controller
     }
 
     /**
-     * Muestra el formulario para crear un nuevo usuario desde el admin.
+     * Muestra formulario para crear un nuevo usuario desde el admin.
      */
     public function create(): View
     {
@@ -98,7 +98,7 @@ class UserAdminController extends Controller
     }
 
     /**
-     * Muestra el detalle de un usuario.
+     * Muestra detalle de un usuario.
      *
      * @param  int  $id_user
      */
@@ -110,7 +110,7 @@ class UserAdminController extends Controller
     }
 
     /**
-     * Muestra el formulario para editar un usuario existente.
+     * Muestra formulario para editar un usuario existente.
      *
      * @param  int  $id_user
      */
@@ -207,7 +207,7 @@ class UserAdminController extends Controller
     }
 
     /**
-     * Cambia el rol de un usuario (reemplaza todos los roles actuales).
+     * Cambia rol de un usuario (reemplaza todos los roles actuales).
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id_user

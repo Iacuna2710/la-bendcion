@@ -25,7 +25,7 @@ class RegisteredUserController extends Controller
 
     /**
      * Procesa registro de un nuevo usuario.
-     * Crea el usuario con los campos personalizados de la tabla `users`.
+     * Crea usuario con los campos personalizados de la tabla `users`.
      * Asigna automáticamente el rol 'cliente'.
      * Verifica el correo inmediatamente (sin flujo de verificación por email).
      * Inicia sesión y redirige al catálogo.
@@ -34,7 +34,7 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // Validar los campos del formulario de registro
+        // Valida los campos del formulario de registro
         $request->validate([
             'nombre'   => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
@@ -49,7 +49,7 @@ class RegisteredUserController extends Controller
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
-        // Crear el usuario con los campos de nuestra tabla personalizada
+        // Crea el usuario con los campos de nuestra tabla personalizada
         $usuario = User::create([
             'nombre'               => $request->nombre,
             'email'                => $request->email,
@@ -61,16 +61,16 @@ class RegisteredUserController extends Controller
             'email_verified_at'    => now(),
         ]);
 
-        // Asignar automáticamente el rol 'cliente' al nuevo usuario
+        // Asigna automáticamente el rol 'cliente' al nuevo usuario
         $rolCliente = Rol::where('nombre', 'cliente')->first();
         if ($rolCliente) {
             $usuario->roles()->attach($rolCliente->id_roles);
         }
 
-        // Disparar el evento Registered (usado por Breeze para notificaciones internas)
+        // Dispara el evento Registered (usado por Breeze para notificaciones internas)
         event(new Registered($usuario));
 
-        // Iniciar sesión automáticamente
+        // Inicia sesión automáticamente
         Auth::login($usuario);
 
         // Los nuevos clientes van al catálogo después de registrarse

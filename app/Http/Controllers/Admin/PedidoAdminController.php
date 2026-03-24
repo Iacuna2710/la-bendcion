@@ -100,7 +100,7 @@ class PedidoAdminController extends Controller
     }
 
     /**
-     * Cambia el estado de un pedido llamando al SP sp_cambiar_estado_pedido.
+     * Cambia estado de un pedido llamando al SP sp_cambiar_estado_pedido.
      * Después notifica al cliente por correo electrónico con el nuevo estado.
      *
      * @param  \Illuminate\Http\Request  $request

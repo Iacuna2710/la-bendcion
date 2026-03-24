@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Carrito extends Model
 {
-    // ── Configuración ────────────────────────────────────────────────────────
     protected $table      = 'carritos';
     protected $primaryKey = 'id_carrito';
 
@@ -31,19 +30,11 @@ class Carrito extends Model
         ];
     }
 
-    // ── Relaciones ───────────────────────────────────────────────────────────
-
-    /**
-     * El carrito pertenece a un usuario.
-     */
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 
-    /**
-     * El carrito tiene muchos ítems.
-     */
     public function items()
     {
         return $this->hasMany(CartItem::class, 'id_carrito', 'id_carrito');

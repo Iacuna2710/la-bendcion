@@ -12,9 +12,9 @@ use Illuminate\Queue\SerializesModels;
 /**
  * Mailable PasswordTemporalMail
  *
- * Envía la contraseña temporal al usuario por correo electrónico (RF-04).
+ * Envía la contraseña temporal al usuario por correo electrónico.
  * Utiliza la clase Mailable de Laravel y envía el email a través del
- * servidor SMTP configurado en el .env (Mailtrap en desarrollo).
+ * servidor SMTP configurado en el .env.
  */
 class PasswordTemporalMail extends Mailable
 {
@@ -28,7 +28,7 @@ class PasswordTemporalMail extends Mailable
     public User $usuario;
 
     /**
-     * La contraseña temporal en texto plano (solo para mostrarla en el email).
+     * La contraseña temporal.
      *
      * @var string
      */
@@ -38,7 +38,7 @@ class PasswordTemporalMail extends Mailable
      * Crea una nueva instancia del Mailable.
      *
      * @param  \App\Models\User  $usuario          Usuario que recibirá el correo
-     * @param  string            $passwordTemporal  Contraseña temporal en texto plano
+     * @param  string            $passwordTemporal  Contraseña temporal
      */
     public function __construct(User $usuario, string $passwordTemporal)
     {
@@ -47,7 +47,7 @@ class PasswordTemporalMail extends Mailable
     }
 
     /**
-     * Define el encabezado (asunto y remitente) del correo.
+     * Define el encabezado del correo.
      */
     public function envelope(): Envelope
     {
@@ -58,8 +58,7 @@ class PasswordTemporalMail extends Mailable
 
     /**
      * Define el contenido del correo usando la vista Blade.
-     * Las propiedades públicas ($usuario, $passwordTemporal) se pasan
-     * automáticamente a la vista.
+     * Las propiedades públicas se pasan automáticamente a la vista.
      */
     public function content(): Content
     {

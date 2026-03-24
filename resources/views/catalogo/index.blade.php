@@ -13,7 +13,7 @@
         <div class="row align-items-center g-4">
             <div class="col-lg-6">
                 <span class="badge lb-badge-natural mb-3 px-3 py-2">
-                    🌿 100% Natural &amp; Macrobiótico
+                    100% Natural
                 </span>
                 <h1 class="display-4 fw-bold text-white mb-3 lh-sm">
                     Alimenta tu cuerpo,<br>

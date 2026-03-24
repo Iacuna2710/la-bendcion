@@ -104,12 +104,12 @@
         <div class="row align-items-center">
             <div class="col-md-6 text-center text-md-start">
                 <p class="text-white-50 small mb-0">
-                    &copy; {{ date('Y') }} La Bendición — Macrobiótica Natural. Todos los derechos reservados.
+                    &copy; {{ date('Y') }} Macrobiótica La Bendición. &nbsp;|&nbsp; Todos los derechos reservados.  &nbsp;|&nbsp; Desarrollado por Grupo 1
                 </p>
             </div>
             <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
                 <span class="text-white-50 small">
-                    Hecho con <i class="bi bi-heart-fill text-danger"></i> en Costa Rica
+                    Hecho en Costa Rica
                 </span>
             </div>
         </div>

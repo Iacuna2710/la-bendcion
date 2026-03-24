@@ -24,10 +24,6 @@ use Illuminate\View\View;
  */
 class CarritoController extends Controller
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // Mostrar el carrito
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
      * Muestra el contenido actual del carrito del usuario autenticado.
      * Si no tiene carrito, muestra uno vacío.
@@ -46,10 +42,6 @@ class CarritoController extends Controller
         return view('carrito.index', compact('carrito'));
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Agregar producto al carrito
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
      * Agrega un producto al carrito usando el SP sp_agregar_al_carrito.
      * El SP maneja la lógica de creación del carrito si no existe,
@@ -60,7 +52,7 @@ class CarritoController extends Controller
      */
     public function agregar(Request $request): RedirectResponse
     {
-        // Validar los datos de entrada
+        // Valida los datos de entrada
         $request->validate([
             'id_producto' => ['required', 'integer', 'exists:productos,id_producto'],
             'cantidad'    => ['required', 'integer', 'min:1', 'max:99'],
@@ -74,13 +66,13 @@ class CarritoController extends Controller
 
         $usuario = Auth::user();
 
-        // Verificar que el producto tenga stock suficiente
+        // Verifica que el producto tenga stock suficiente
         $producto = Producto::findOrFail($request->id_producto);
         if ($producto->stock < $request->cantidad) {
             return back()->with('error', "Stock insuficiente. Solo hay {$producto->stock} unidades disponibles.");
         }
 
-        // Llamar al procedimiento almacenado sp_agregar_al_carrito
+        // Llama al procedimiento almacenado sp_agregar_al_carrito
         // Este SP crea el carrito si no existe y actualiza el ítem si ya está
         DB::statement('CALL sp_agregar_al_carrito(?, ?, ?)', [
             $usuario->id_user,
@@ -90,10 +82,6 @@ class CarritoController extends Controller
 
         return back()->with('success', "«{$producto->nombre}» agregado al carrito correctamente.");
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Actualizar cantidad de un ítem
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Actualiza la cantidad de un ítem del carrito.
@@ -115,33 +103,30 @@ class CarritoController extends Controller
 
         $usuario = Auth::user();
 
-        // Buscar el ítem y verificar que pertenece al carrito del usuario autenticado
+        // Busca el ítem y verifica que pertenece al carrito del usuario autenticado
         $item = CartItem::with('carrito')->findOrFail($id_c_item);
 
         if ($item->carrito->id_user !== $usuario->id_user) {
             abort(403, 'No puedes modificar este ítem.');
         }
 
-        // Verificar stock disponible
+        // Verifica stock disponible
         if ($item->producto->stock < $request->cantidad) {
             return back()->with('error', "Stock insuficiente. Solo hay {$item->producto->stock} unidades disponibles.");
         }
 
-        // Actualizar cantidad y recalcular subtotal del ítem
+        // Actualiza cantidad y recalcula subtotal del ítem
         $item->update([
             'cantidad' => $request->cantidad,
             'subtotal' => $item->precio_unitario * $request->cantidad,
         ]);
 
-        // Recalcular los totales del carrito
+        // Recalcula los totales del carrito
         $this->recalcularCarrito($item->carrito);
 
         return back()->with('success', 'Carrito actualizado correctamente.');
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Eliminar un ítem del carrito
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Elimina un ítem específico del carrito.
@@ -155,7 +140,7 @@ class CarritoController extends Controller
 
         $item = CartItem::with('carrito')->findOrFail($id_c_item);
 
-        // Verificar que el ítem pertenece al carrito del usuario autenticado
+        // Verifica que el ítem pertenece al carrito del usuario autenticado
         if ($item->carrito->id_user !== $usuario->id_user) {
             abort(403, 'No puedes eliminar este ítem.');
         }
@@ -163,15 +148,11 @@ class CarritoController extends Controller
         $carrito = $item->carrito;
         $item->delete();
 
-        // Recalcular los totales del carrito después de la eliminación
+        // Recalcula los totales del carrito después de la eliminación
         $this->recalcularCarrito($carrito);
 
         return back()->with('success', 'Producto eliminado del carrito.');
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Vaciar el carrito completo
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Vacía completamente el carrito del usuario usando el SP sp_vaciar_carrito.
@@ -185,16 +166,13 @@ class CarritoController extends Controller
         $carrito = Carrito::where('id_user', $usuario->id_user)->first();
 
         if ($carrito) {
-            // Llamar al procedimiento almacenado sp_vaciar_carrito
+            // Llama al procedimiento almacenado sp_vaciar_carrito
             DB::statement('CALL sp_vaciar_carrito(?)', [$carrito->id_carrito]);
         }
 
         return redirect()->route('carrito.index')->with('success', 'Carrito vaciado correctamente.');
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Método auxiliar privado
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Recalcula los campos subtotal y total del carrito en base a sus ítems actuales.
@@ -204,7 +182,7 @@ class CarritoController extends Controller
      */
     private function recalcularCarrito(Carrito $carrito): void
     {
-        // Recargar los ítems frescos desde la base de datos
+        // Recarga los ítems desde la base de datos
         $carrito->load('items');
 
         $subtotal = $carrito->items->sum('subtotal');

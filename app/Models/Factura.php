@@ -5,16 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * Modelo Factura — facturas generadas automáticamente al confirmar el pago.
- * Tabla: facturas | Clave primaria: id_factura
- * Usa SoftDeletes para eliminación lógica mediante deleted_at.
- */
 class Factura extends Model
 {
     use SoftDeletes;
 
-    // ── Configuración ────────────────────────────────────────────────────────
     protected $table      = 'facturas';
     protected $primaryKey = 'id_factura';
 
@@ -39,25 +33,14 @@ class Factura extends Model
         ];
     }
 
-    // ── Relaciones ───────────────────────────────────────────────────────────
-
-    /**
-     * Una factura pertenece a un pedido.
-     */
     public function pedido()
     {
         return $this->belongsTo(Pedido::class, 'id_pedido', 'id_pedido');
     }
-
-    /**
-     * Una factura tiene muchos ítems de productos.
-     */
     public function items()
     {
         return $this->hasMany(FacturaItem::class, 'id_factura', 'id_factura');
     }
-
-    // ── Métodos auxiliares ───────────────────────────────────────────────────
 
     /**
      * Genera el número de factura con el formato FAC-YYYYMMDD-XXXX.

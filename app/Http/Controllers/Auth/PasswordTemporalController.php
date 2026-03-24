@@ -53,21 +53,21 @@ class PasswordTemporalController extends Controller
             'email.email'    => 'Ingresa un correo electrónico válido.',
         ]);
 
-        // Buscar usuario en la base de datos
+        // Busca usuario en la base de datos
         $usuario = User::where('email', $request->email)->first();
 
         // Por seguridad no revelamos si el correo existe o no
         if ($usuario) {
-            // Generar contraseña temporal alfanumérica de 10 caracteres
+            // Genera contraseña temporal alfanumérica de 10 caracteres
             $passwordTemporal = Str::random(10);
 
-            // Actualizar el usuario: hashear la contraseña temporal y marcar el flag
+            // Actualiza el usuario: hashea la contraseña temporal y marca el flag
             $usuario->update([
                 'password'             => Hash::make($passwordTemporal),
                 'password_es_temporal' => true,
             ]);
 
-            // Enviar la contraseña temporal por correo electrónico (SMTP)
+            // Envía la contraseña temporal por correo electrónico (SMTP)
             Mail::to($usuario->email)->send(new PasswordTemporalMail($usuario, $passwordTemporal));
         }
 
@@ -84,7 +84,7 @@ class PasswordTemporalController extends Controller
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
 
-        // Si no tiene contraseña temporal, redirigir al inicio según su rol
+        // Si no tiene contraseña temporal, redirige al inicio según su rol
         if (!$usuario || !$usuario->password_es_temporal) {
             return redirect()->route('inicio');
         }
@@ -102,12 +102,12 @@ class PasswordTemporalController extends Controller
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
 
-        // Verificar que el usuario esté en el flujo de contraseña temporal
+        // Verifica que el usuario esté en el flujo de contraseña temporal
         if (!$usuario || !$usuario->password_es_temporal) {
             return redirect()->route('inicio');
         }
 
-        // Validar la nueva contraseña: mínimo 8 caracteres, una mayúscula, un número
+        // Valida la nueva contraseña: mínimo 8 caracteres, una mayúscula, un número
         $request->validate([
             'password' => [
                 'required',
@@ -123,13 +123,13 @@ class PasswordTemporalController extends Controller
             'password.regex'     => 'La contraseña debe contener al menos una mayúscula y un número.',
         ]);
 
-        // Guardar la nueva contraseña y desactivar el flag de contraseña temporal
+        // Guarda la nueva contraseña y desactiva el flag de contraseña temporal
         $usuario->update([
             'password'             => Hash::make($request->password),
             'password_es_temporal' => false,
         ]);
 
-        // Redirigir al panel correspondiente según el rol
+        // Redirige al panel correspondiente según el rol
         if ($usuario->hasAnyRole(['admin', 'trabajador'])) {
             return redirect()->route('admin.dashboard')
                 ->with('success', 'Contraseña actualizada correctamente. Bienvenido.');

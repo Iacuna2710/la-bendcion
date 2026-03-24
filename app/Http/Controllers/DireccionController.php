@@ -14,15 +14,12 @@ use Illuminate\View\View;
 /**
  * DireccionController
  *
- * Gestiona las direcciones de entrega del usuario autenticado (RF-12).
+ * Gestiona las direcciones de entrega del usuario autenticado.
  * Permite crear, editar, ver y desactivar (eliminación lógica) direcciones.
  * Las eliminaciones nunca son físicas: se usa el campo is_active = false.
  */
 class DireccionController extends Controller
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // Listar direcciones
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Muestra todas las direcciones activas del usuario autenticado.
@@ -41,10 +38,6 @@ class DireccionController extends Controller
         return view('direcciones.index', compact('direcciones'));
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Formulario de nueva dirección
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
      * Muestra el formulario para registrar una nueva dirección.
      * Carga las provincias activas para los selectores en cascada.
@@ -58,10 +51,6 @@ class DireccionController extends Controller
 
         return view('direcciones.form', compact('provincias'));
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Guardar nueva dirección
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Guarda una nueva dirección en la base de datos.
@@ -106,9 +95,6 @@ class DireccionController extends Controller
             ->with('success', 'Dirección registrada correctamente.');
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Formulario de edición
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Muestra el formulario para editar una dirección existente.
@@ -129,7 +115,7 @@ class DireccionController extends Controller
 
         $provincias = Provincia::where('is_active', true)->orderBy('nombre')->get();
 
-        // Precargar cantones y distritos del registro actual para los selectores
+        // Precarga cantones y distritos del registro actual para los selectores
         $cantones  = Canton::where('id_provincia', $direccion->distrito->canton->id_provincia)
             ->where('is_active', true)->orderBy('nombre')->get();
 
@@ -138,10 +124,6 @@ class DireccionController extends Controller
 
         return view('direcciones.form', compact('direccion', 'provincias', 'cantones', 'distritos'));
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Actualizar dirección
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Actualiza los datos de una dirección existente del usuario.
@@ -191,10 +173,6 @@ class DireccionController extends Controller
             ->with('success', 'Dirección actualizada correctamente.');
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Eliminar (desactivar) una dirección
-    // ─────────────────────────────────────────────────────────────────────────
-
     /**
      * Desactiva (eliminación lógica) una dirección del usuario.
      * Nunca se elimina físicamente el registro.
@@ -216,10 +194,6 @@ class DireccionController extends Controller
         return redirect()->route('direcciones.index')
             ->with('success', 'Dirección eliminada correctamente.');
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // API interna — Cantones por provincia (para selectores en cascada)
-    // ─────────────────────────────────────────────────────────────────────────
 
     /**
      * Retorna los cantones activos de una provincia en formato JSON.

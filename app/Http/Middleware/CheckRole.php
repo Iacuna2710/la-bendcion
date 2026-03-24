@@ -25,21 +25,21 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        // Si el usuario no está autenticado, redirigir al login
+        // Si el usuario no está autenticado, redirige al login
         if (!$request->user()) {
             return redirect()->route('login');
         }
 
         $usuario = $request->user();
 
-        // Obtener los nombres de roles del usuario autenticado
+        // Obtiene los nombres de roles del usuario autenticado
         // La relación 'roles' devuelve una colección de objetos Rol
         $rolesUsuario = $usuario->roles->pluck('nombre')->toArray();
 
-        // Verificar si el usuario tiene al menos uno de los roles requeridos
+        // Verifica si el usuario tiene al menos uno de los roles requeridos
         foreach ($roles as $rolRequerido) {
             if (in_array($rolRequerido, $rolesUsuario)) {
-                // El usuario tiene el rol, permitir el acceso
+                // El usuario tiene el rol, permite el acceso
                 return $next($request);
             }
         }

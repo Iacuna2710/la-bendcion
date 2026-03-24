@@ -5,16 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * Modelo Pedido — pedidos realizados por los clientes.
- * Tabla: pedidos | Clave primaria: id_pedido
- * Usa SoftDeletes para eliminación lógica mediante deleted_at.
- */
 class Pedido extends Model
 {
     use SoftDeletes;
 
-    // ── Configuración ────────────────────────────────────────────────────────
     protected $table      = 'pedidos';
     protected $primaryKey = 'id_pedido';
 
@@ -46,57 +40,38 @@ class Pedido extends Model
         ];
     }
 
-    // ── Relaciones ───────────────────────────────────────────────────────────
-
-    /**
-     * Un pedido pertenece a un usuario (cliente).
-     */
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 
-    /**
-     * Un pedido tiene una dirección de entrega.
-     */
+
     public function direccion()
     {
         return $this->belongsTo(Direccion::class, 'id_direccion', 'id_direccion');
     }
 
-    /**
-     * Un pedido tiene un estado.
-     */
+
     public function estadoPedido()
     {
         return $this->belongsTo(EstadoPedido::class, 'id_estado_ped', 'id_estado_ped');
     }
 
-    /**
-     * Un pedido tiene muchos ítems de productos.
-     */
+
     public function items()
     {
         return $this->hasMany(PedidoItem::class, 'id_pedido', 'id_pedido');
     }
 
-    /**
-     * Un pedido puede tener muchos registros de pago.
-     */
     public function pagos()
     {
         return $this->hasMany(Pago::class, 'id_pedido', 'id_pedido');
     }
 
-    /**
-     * Un pedido tiene exactamente una factura.
-     */
     public function factura()
     {
         return $this->hasOne(Factura::class, 'id_pedido', 'id_pedido');
     }
-
-    // ── Métodos auxiliares ───────────────────────────────────────────────────
 
     /**
      * Genera el número de pedido con el formato PED-YYYYMMDD-XXXX.

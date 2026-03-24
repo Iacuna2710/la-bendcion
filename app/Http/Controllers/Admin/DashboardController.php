@@ -12,13 +12,13 @@ use Illuminate\View\View;
 /**
  * DashboardController
  *
- * Muestra el panel de control del administrador con KPIs del sistema,
+ * Muestra panel de control del administrador con KPIs del sistema,
  * alertas de stock bajo y últimos pedidos recientes.
  */
 class DashboardController extends Controller
 {
     /**
-     * Muestra el dashboard principal del panel administrativo.
+     * Muestra dashboard principal del panel administrativo.
      * Recopila indicadores clave y alertas de stock.
      */
     public function index(): View
