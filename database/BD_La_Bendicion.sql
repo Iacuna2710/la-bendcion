@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `la_bendicion` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
-USE `la_bendicion`;
 -- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: la_bendicion
@@ -74,7 +72,7 @@ CREATE TABLE `carritos` (
 
 LOCK TABLES `carritos` WRITE;
 /*!40000 ALTER TABLE `carritos` DISABLE KEYS */;
-INSERT INTO `carritos` VALUES (2,8,0.00,0.00,0.00,'2026-03-21 05:18:19','2026-03-21 05:22:34');
+INSERT INTO `carritos` VALUES (2,8,0.00,0.00,0.00,'2026-03-21 05:18:19','2026-03-25 18:25:54');
 /*!40000 ALTER TABLE `carritos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -99,7 +97,7 @@ CREATE TABLE `cart_items` (
   KEY `fk_ci_producto` (`id_producto`),
   CONSTRAINT `fk_ci_carrito` FOREIGN KEY (`id_carrito`) REFERENCES `carritos` (`id_carrito`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_ci_producto` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -163,7 +161,7 @@ CREATE TABLE `direcciones` (
   KEY `fk_dir_distrito` (`id_distrito`),
   CONSTRAINT `fk_dir_distrito` FOREIGN KEY (`id_distrito`) REFERENCES `distritos` (`id_distrito`) ON UPDATE CASCADE,
   CONSTRAINT `fk_dir_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +170,7 @@ CREATE TABLE `direcciones` (
 
 LOCK TABLES `direcciones` WRITE;
 /*!40000 ALTER TABLE `direcciones` DISABLE KEYS */;
-INSERT INTO `direcciones` VALUES (1,8,50,1,'De la plaza de deportes de dulce nombre, 200 metros a la derecha',1,'2026-03-21 11:02:12','2026-03-21 11:02:12'),(2,1,1,0,'Mercado Central',1,'2026-03-22 04:41:57','2026-03-22 04:41:57');
+INSERT INTO `direcciones` VALUES (1,8,50,0,'De la plaza de deportes de dulce nombre, 200 metros a la derecha',1,'2026-03-21 11:02:12','2026-03-24 08:42:33'),(2,1,1,0,'Mercado Central',1,'2026-03-22 04:41:57','2026-03-22 04:41:57'),(3,8,54,1,'frente a la iglesia de mercedes sur',1,'2026-03-24 08:42:24','2026-03-24 08:42:33');
 /*!40000 ALTER TABLE `direcciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -293,7 +291,7 @@ CREATE TABLE `facturas` (
   UNIQUE KEY `id_pedido` (`id_pedido`),
   UNIQUE KEY `numero_factura` (`numero_factura`),
   CONSTRAINT `fk_fac_pedido` FOREIGN KEY (`id_pedido`) REFERENCES `pedidos` (`id_pedido`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -302,7 +300,7 @@ CREATE TABLE `facturas` (
 
 LOCK TABLES `facturas` WRITE;
 /*!40000 ALTER TABLE `facturas` DISABLE KEYS */;
-INSERT INTO `facturas` VALUES (1,1,'FAC-20260320-0001','2026-03-20',4000.00,520.00,4520.00,'emitida',NULL,NULL,'2026-03-21 05:18:32','2026-03-21 05:18:32'),(2,2,'FAC-20260320-0002','2026-03-20',4000.00,520.00,4520.00,'emitida',NULL,NULL,'2026-03-21 05:22:34','2026-03-21 05:22:34');
+INSERT INTO `facturas` VALUES (1,1,'FAC-20260320-0001','2026-03-20',4000.00,520.00,4520.00,'emitida',NULL,NULL,'2026-03-21 05:18:32','2026-03-21 05:18:32'),(2,2,'FAC-20260320-0002','2026-03-20',4000.00,520.00,4520.00,'emitida',NULL,NULL,'2026-03-21 05:22:34','2026-03-21 05:22:34'),(3,3,'FAC-20260323-0001','2026-03-23',49000.00,6370.00,55370.00,'emitida',NULL,NULL,'2026-03-24 02:43:08','2026-03-24 02:43:08'),(4,4,'FAC-20260325-0001','2026-03-25',7500.00,975.00,8475.00,'emitida',NULL,NULL,'2026-03-25 18:25:54','2026-03-25 18:25:54');
 /*!40000 ALTER TABLE `facturas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -389,7 +387,7 @@ CREATE TABLE `pagos` (
   KEY `fk_pag_pedido` (`id_pedido`),
   CONSTRAINT `fk_pag_metodo` FOREIGN KEY (`id_met_pago`) REFERENCES `metodos_pago` (`id_met_pago`) ON UPDATE CASCADE,
   CONSTRAINT `fk_pag_pedido` FOREIGN KEY (`id_pedido`) REFERENCES `pedidos` (`id_pedido`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -398,7 +396,7 @@ CREATE TABLE `pagos` (
 
 LOCK TABLES `pagos` WRITE;
 /*!40000 ALTER TABLE `pagos` DISABLE KEYS */;
-INSERT INTO `pagos` VALUES (1,1,1,4520.00,'pendiente',NULL,NULL,NULL,'2026-03-21 05:18:31','2026-03-21 05:18:31'),(2,1,2,4520.00,'pendiente',NULL,NULL,NULL,'2026-03-21 05:22:34','2026-03-21 05:22:34');
+INSERT INTO `pagos` VALUES (1,1,1,4520.00,'pendiente',NULL,NULL,NULL,'2026-03-21 05:18:31','2026-03-21 05:18:31'),(2,1,2,4520.00,'pendiente',NULL,NULL,NULL,'2026-03-21 05:22:34','2026-03-21 05:22:34'),(3,4,3,55370.00,'pendiente',NULL,NULL,NULL,'2026-03-24 02:43:08','2026-03-24 02:43:08'),(4,1,4,8475.00,'pendiente',NULL,NULL,NULL,'2026-03-25 18:25:54','2026-03-25 18:25:54');
 /*!40000 ALTER TABLE `pagos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -468,7 +466,7 @@ CREATE TABLE `pedidos` (
   CONSTRAINT `fk_ped_direccion` FOREIGN KEY (`id_direccion`) REFERENCES `direcciones` (`id_direccion`) ON UPDATE CASCADE,
   CONSTRAINT `fk_ped_estado` FOREIGN KEY (`id_estado_ped`) REFERENCES `estados_pedido` (`id_estado_ped`) ON UPDATE CASCADE,
   CONSTRAINT `fk_ped_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -477,7 +475,7 @@ CREATE TABLE `pedidos` (
 
 LOCK TABLES `pedidos` WRITE;
 /*!40000 ALTER TABLE `pedidos` DISABLE KEYS */;
-INSERT INTO `pedidos` VALUES (1,4,8,1,'PED-20260320-0001',4000.00,0.00,520.00,0.00,4520.00,NULL,NULL,'2026-03-20',NULL,'2026-03-21 05:18:31','2026-03-21 05:19:15'),(2,5,8,1,'PED-20260320-0002',4000.00,0.00,520.00,0.00,4520.00,NULL,NULL,NULL,NULL,'2026-03-21 05:22:34','2026-03-21 05:23:03');
+INSERT INTO `pedidos` VALUES (1,4,8,1,'PED-20260320-0001',4000.00,0.00,520.00,0.00,4520.00,NULL,NULL,'2026-03-20',NULL,'2026-03-21 05:18:31','2026-03-21 05:19:15'),(2,2,8,1,'PED-20260320-0002',4000.00,0.00,520.00,0.00,4520.00,NULL,NULL,NULL,NULL,'2026-03-21 05:22:34','2026-03-24 04:51:01'),(3,4,8,3,'PED-20260323-0001',49000.00,0.00,6370.00,0.00,55370.00,NULL,NULL,'2026-03-23',NULL,'2026-03-24 02:43:08','2026-03-24 02:46:24'),(4,1,8,1,'PED-20260325-0001',7500.00,0.00,975.00,0.00,8475.00,NULL,NULL,NULL,NULL,'2026-03-25 18:25:54','2026-03-25 18:25:54');
 /*!40000 ALTER TABLE `pedidos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -540,7 +538,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (1,'Quinoa Orgánica','Quinoa orgánica de alta calidad, rica en proteínas y aminoácidos esenciales.',4000.00,50,5,'QUI-001','Quinoa orgánica 100%','Alto contenido proteico, sin gluten, fuente de hierro y calcio.',1,'2026-03-21 11:08:05','2026-03-21 10:15:51','2026-03-21 11:08:05'),(2,'Quinoa Orgánica','Quinoa orgánica de alta calidad, rica en proteínas y aminoácidos esenciales.',4000.00,29,5,'QUI-002','Quinoa orgánica 100%','Alto contenido proteico, sin gluten, fuente de hierro y calcio.',1,'2026-03-22 02:23:01','2026-03-21 11:17:11','2026-03-22 02:23:01'),(3,'Capsulas de Omega 3','Suplemento rico en ácidos grasos esenciales para la salud cardiovascular.',8500.00,20,5,'CAP-OMEGA3','Aceite de pescado, gelatina, glicerina.','Mejora la salud del corazón, función cerebral y reduce inflamación.',1,NULL,'2026-03-22 02:22:36','2026-03-22 02:22:36'),(4,'Capsulas de Citrato de Magnesio','Suplemento mineral esencial para músculos y sistema nervioso.',6000.00,25,5,'CAP-MAG','Citrato de magnesio, cápsula vegetal.','Reduce estrés, mejora el sueño y previene calambres.',1,NULL,'2026-03-22 02:25:18','2026-03-22 02:25:18'),(5,'Infusion de Manzanilla','Té natural relajante ideal para la digestión.',2500.00,30,5,'INF-MANZ','Flores de manzanilla secas.','Reduce ansiedad y mejora digestión.',1,NULL,'2026-03-22 02:28:55','2026-03-22 02:28:55'),(6,'Infusion de te verde','Bebida antioxidante que apoya el metabolismo.',3000.00,25,5,'INF-TEVERDE','Hojas de té verde.','Ayuda a quemar grasa y mejora energía.',0,NULL,'2026-03-22 02:30:40','2026-03-22 02:30:40'),(7,'Aceite de Coco Extra Virgen','Aceite natural multiuso para cocina y piel.',7000.00,20,5,'ACE-COCO','100% aceite de coco.','Mejora la piel, energía rápida y salud digestiva.',0,NULL,'2026-03-22 02:33:02','2026-03-22 02:33:02'),(8,'Aceite de Oliva Extra Virgen','Aceite saludable rico en grasas buenas.',8000.00,20,5,'ACE-OLIVA','Aceite de oliva prensado en frío.','Protege el corazón y reduce colesterol.',1,NULL,'2026-03-22 02:36:58','2026-03-22 02:36:58'),(9,'Gotas de Propoleo','Extracto natural para fortalecer defensas.',5000.00,15,5,'GOT-PROPO','Propóleo, alcohol.','Refuerza sistema inmune.',1,NULL,'2026-03-22 02:38:48','2026-03-22 02:38:48'),(10,'Gotas de Valeriana','Extracto relajante natural.',5000.00,13,5,'GOT-VAL','Extracto de valeriana.','Mejora sueño y reduce ansiedad.',0,NULL,'2026-03-22 02:41:30','2026-03-22 02:41:30'),(11,'Aceite Esencial de Lavanda','Aceite relajante para uso aromático.',6500.00,12,5,'ARO-LAV','Extracto de lavanda.','Reduce estrés y mejora el sueño.',1,NULL,'2026-03-22 02:44:42','2026-03-22 03:37:40'),(12,'Aceite Esencial de Eucalipto','Aceite refrescante para vías respiratorias.',6500.00,12,5,'ARO-EUC','Extracto de eucalipto.','Descongestiona y mejora respiración.',0,NULL,'2026-03-22 02:48:34','2026-03-22 02:48:34'),(13,'Jarabe Oral Natural Life para Niños','Jarabe natural para niños elaborado con ingredientes herbales que ayudan a fortalecer el sistema respiratorio y mejorar el bienestar general.',4500.00,15,5,'JAR-NATURAL-KIDS','Tomillo, jengibre, zacate de limón, vitaminas y minerales.','Refuerza el sistema inmunológico\r\nAlivia síntomas respiratorios\r\nApto para niños\r\nFórmula natural',0,NULL,'2026-03-22 02:55:28','2026-03-22 02:55:28'),(14,'Jarabe de Rábano Yodado Lancasco','Jarabe natural a base de rábano con yodo y hierro, ideal para fortalecer el organismo y mejorar las defensas.',5500.00,20,5,'JAR-RABANO','Rábano fresco, yodo, hierro, extractos naturales.','Fortalece el sistema inmunológico\r\nAporta hierro\r\nMejora la salud respiratoria\r\nSabor agradable',0,NULL,'2026-03-22 02:56:31','2026-03-22 02:56:31'),(15,'Proteina Whey Organica Vainilla','Proteína para recuperación muscular.',23000.00,15,5,'GYM-WHEY','Proteína de suero.','Aumento masa muscular.',0,NULL,'2026-03-22 03:22:24','2026-03-22 03:22:24'),(16,'Creatina Monohidratada','Suplemento deportivo que mejora la fuerza, potencia y rendimiento físico en entrenamientos intensos.',18000.00,18,5,'GYM-CREA','Creatina monohidratada pura.','Aumenta fuerza y rendimiento\r\nMejora resistencia muscular\r\nFavorece el crecimiento muscular\r\nIdeal para gimnasio',1,NULL,'2026-03-22 03:25:15','2026-03-22 03:37:30'),(17,'Jabon de Carbon Activado','Limpieza profunda para piel grasa.',2500.00,22,5,'JAB-CARB','Carbón activado, aceites naturales.','Elimina impurezas.',0,NULL,'2026-03-22 03:27:02','2026-03-22 03:27:02'),(18,'Jabon de Avena y Miel','Hidratación suave para piel sensible.',2500.00,18,5,'JAB-AVENA','Avena, miel.','Suaviza y nutre la piel.',0,NULL,'2026-03-22 03:28:19','2026-03-22 03:28:19'),(19,'Shampoo Herbácil Antipiojos','Shampoo especializado para eliminar piojos y liendres de forma efectiva y segura, ideal para uso familiar.',6500.00,12,5,'SHA-HERBACIL','Extractos naturales, agentes limpiadores suaves, componentes antipiojos.','Elimina piojos y liendres\r\nUso familiar seguro\r\nFácil aplicación\r\nIncluye peine especial',0,NULL,'2026-03-22 03:31:10','2026-03-22 03:31:10'),(20,'Shampoo de Sábila con Ajo y 7 Maravillas','Shampoo natural enriquecido con sábila, ajo y extractos herbales que fortalecen y nutren el cabello desde la raíz.',5600.00,15,5,'SHA-SABILA','Sábila (aloe vera), ajo, extractos naturales.','Fortalece el cabello\r\nEstimula el crecimiento\r\nHidrata el cuero cabelludo\r\nReduce la caída',0,NULL,'2026-03-22 03:32:12','2026-03-22 03:32:12'),(21,'Avena Integral','Avena integral natural ideal para desayunos saludables, rica en fibra y perfecta para una alimentación equilibrada.',1800.00,40,5,'GRA-AVENA','Avena 100% natural.','Rica en fibra\r\nMejora la digestión\r\nAporta energía sostenida\r\nAyuda a controlar el colesterol',0,NULL,'2026-03-22 03:37:18','2026-03-22 03:37:18'),(22,'Quinoa Orgánica','Quinoa orgánica considerada un superalimento por su alto contenido de proteínas y nutrientes esenciales.',3500.00,30,5,'GRA-QUINOA','Quinoa 100% natural.','Alta en proteína\r\nLibre de gluten\r\nRica en minerales\r\nIdeal para dietas saludables',0,NULL,'2026-03-22 03:39:06','2026-03-22 03:39:06'),(23,'Almendras','Almendras naturales ideales como snack saludable o complemento en diferentes comidas.',4000.00,25,5,'SEM-ALM','Almendras 100% naturales.','Grasas saludables\r\nFuente de proteína\r\nEnergía natural\r\nBenefician la salud del corazón',0,NULL,'2026-03-22 03:40:35','2026-03-22 03:40:35'),(24,'Semillas de Chia','Semillas de chía ricas en omega 3 y fibra, ideales para complementar una dieta balanceada.',2250.00,32,5,'SEM-CHIA','Semillas de chía 100% naturales.','Alta en omega 3\r\nMejora la digestión\r\nAporta energía\r\nAyuda a la saciedad',0,NULL,'2026-03-22 03:42:11','2026-03-22 03:42:11'),(25,'Ungüento de Árnica y Caléndula Herbarium','Ungüento natural elaborado con árnica y caléndula, ideal para aliviar dolores musculares, golpes e inflamaciones.',4500.00,20,5,'UNG-ARNICA-CAL','Árnica, caléndula, aceites naturales, cera.','Alivia dolores musculares\r\nReduce inflamación\r\nAyuda en golpes y moretones\r\nUso tópico natural',0,NULL,'2026-03-22 03:44:53','2026-03-22 03:44:53'),(26,'Ungüento de Baba de Caracol con Colágeno','Crema regeneradora a base de baba de caracol y colágeno que ayuda a mejorar la apariencia de la piel.',5000.00,14,5,'UNG-CARACOL','Extracto de baba de caracol, colágeno, componentes hidratantes.','Regenera la piel\r\nMejora elasticidad\r\nReduce manchas y cicatrices\r\nHidratación profunda',0,NULL,'2026-03-22 03:45:43','2026-03-22 05:16:40');
+INSERT INTO `productos` VALUES (1,'Quinoa Orgánica','Quinoa orgánica de alta calidad, rica en proteínas y aminoácidos esenciales.',4000.00,50,5,'QUI-001','Quinoa orgánica 100%','Alto contenido proteico, sin gluten, fuente de hierro y calcio.',1,'2026-03-21 11:08:05','2026-03-21 10:15:51','2026-03-21 11:08:05'),(2,'Quinoa Orgánica','Quinoa orgánica de alta calidad, rica en proteínas y aminoácidos esenciales.',4000.00,29,5,'QUI-002','Quinoa orgánica 100%','Alto contenido proteico, sin gluten, fuente de hierro y calcio.',1,'2026-03-22 02:23:01','2026-03-21 11:17:11','2026-03-22 02:23:01'),(3,'Capsulas de Omega 3','Suplemento rico en ácidos grasos esenciales para la salud cardiovascular.',8500.00,20,5,'CAP-OMEGA3','Aceite de pescado, gelatina, glicerina.','Mejora la salud del corazón, función cerebral y reduce inflamación.',1,NULL,'2026-03-22 02:22:36','2026-03-22 02:22:36'),(4,'Capsulas de Citrato de Magnesio','Suplemento mineral esencial para músculos y sistema nervioso.',6000.00,25,5,'CAP-MAG','Citrato de magnesio, cápsula vegetal.','Reduce estrés, mejora el sueño y previene calambres.',1,NULL,'2026-03-22 02:25:18','2026-03-22 02:25:18'),(5,'Infusion de Manzanilla','Té natural relajante ideal para la digestión.',2500.00,30,5,'INF-MANZ','Flores de manzanilla secas.','Reduce ansiedad y mejora digestión.',1,NULL,'2026-03-22 02:28:55','2026-03-22 02:28:55'),(6,'Infusion de te verde','Bebida antioxidante que apoya el metabolismo.',3000.00,25,5,'INF-TEVERDE','Hojas de té verde.','Ayuda a quemar grasa y mejora energía.',0,NULL,'2026-03-22 02:30:40','2026-03-22 02:30:40'),(7,'Aceite de Coco Extra Virgen','Aceite natural multiuso para cocina y piel.',7000.00,20,5,'ACE-COCO','100% aceite de coco.','Mejora la piel, energía rápida y salud digestiva.',0,NULL,'2026-03-22 02:33:02','2026-03-22 02:33:02'),(8,'Aceite de Oliva Extra Virgen','Aceite saludable rico en grasas buenas.',8000.00,20,5,'ACE-OLIVA','Aceite de oliva prensado en frío.','Protege el corazón y reduce colesterol.',1,NULL,'2026-03-22 02:36:58','2026-03-22 02:36:58'),(9,'Gotas de Propoleo','Extracto natural para fortalecer defensas.',5000.00,15,5,'GOT-PROPO','Propóleo, alcohol.','Refuerza sistema inmune.',1,NULL,'2026-03-22 02:38:48','2026-03-22 02:38:48'),(10,'Gotas de Valeriana','Extracto relajante natural.',5000.00,13,5,'GOT-VAL','Extracto de valeriana.','Mejora sueño y reduce ansiedad.',0,NULL,'2026-03-22 02:41:30','2026-03-22 02:41:30'),(11,'Aceite Esencial de Lavanda','Aceite relajante para uso aromático.',6500.00,12,5,'ARO-LAV','Extracto de lavanda.','Reduce estrés y mejora el sueño.',1,NULL,'2026-03-22 02:44:42','2026-03-22 03:37:40'),(12,'Aceite Esencial de Eucalipto','Aceite refrescante para vías respiratorias.',6500.00,12,5,'ARO-EUC','Extracto de eucalipto.','Descongestiona y mejora respiración.',0,NULL,'2026-03-22 02:48:34','2026-03-22 02:48:34'),(13,'Jarabe Oral Natural Life para Niños','Jarabe natural para niños elaborado con ingredientes herbales que ayudan a fortalecer el sistema respiratorio y mejorar el bienestar general.',4500.00,15,5,'JAR-NATURAL-KIDS','Tomillo, jengibre, zacate de limón, vitaminas y minerales.','Refuerza el sistema inmunológico\r\nAlivia síntomas respiratorios\r\nApto para niños\r\nFórmula natural',0,NULL,'2026-03-22 02:55:28','2026-03-22 02:55:28'),(14,'Jarabe de Rábano Yodado Lancasco','Jarabe natural a base de rábano con yodo y hierro, ideal para fortalecer el organismo y mejorar las defensas.',5500.00,20,5,'JAR-RABANO','Rábano fresco, yodo, hierro, extractos naturales.','Fortalece el sistema inmunológico\r\nAporta hierro\r\nMejora la salud respiratoria\r\nSabor agradable',0,NULL,'2026-03-22 02:56:31','2026-03-22 02:56:31'),(15,'Proteina Whey Organica Vainilla','Proteína para recuperación muscular.',23000.00,15,5,'GYM-WHEY','Proteína de suero.','Aumento masa muscular.',0,NULL,'2026-03-22 03:22:24','2026-03-22 03:22:24'),(16,'Creatina Monohidratada','Suplemento deportivo que mejora la fuerza, potencia y rendimiento físico en entrenamientos intensos.',18000.00,18,5,'GYM-CREA','Creatina monohidratada pura.','Aumenta fuerza y rendimiento\r\nMejora resistencia muscular\r\nFavorece el crecimiento muscular\r\nIdeal para gimnasio',1,NULL,'2026-03-22 03:25:15','2026-03-22 03:37:30'),(17,'Jabon de Carbon Activado','Limpieza profunda para piel grasa.',2500.00,22,5,'JAB-CARB','Carbón activado, aceites naturales.','Elimina impurezas.',0,NULL,'2026-03-22 03:27:02','2026-03-22 03:27:02'),(18,'Jabon de Avena y Miel','Hidratación suave para piel sensible.',2500.00,18,5,'JAB-AVENA','Avena, miel.','Suaviza y nutre la piel.',0,NULL,'2026-03-22 03:28:19','2026-03-22 03:28:19'),(19,'Shampoo Herbácil Antipiojos','Shampoo especializado para eliminar piojos y liendres de forma efectiva y segura, ideal para uso familiar.',6500.00,12,5,'SHA-HERBACIL','Extractos naturales, agentes limpiadores suaves, componentes antipiojos.','Elimina piojos y liendres\r\nUso familiar seguro\r\nFácil aplicación\r\nIncluye peine especial',0,NULL,'2026-03-22 03:31:10','2026-03-22 03:31:10'),(20,'Shampoo de Sábila con Ajo y 7 Maravillas','Shampoo natural enriquecido con sábila, ajo y extractos herbales que fortalecen y nutren el cabello desde la raíz.',5600.00,15,5,'SHA-SABILA','Sábila (aloe vera), ajo, extractos naturales.','Fortalece el cabello\r\nEstimula el crecimiento\r\nHidrata el cuero cabelludo\r\nReduce la caída',0,NULL,'2026-03-22 03:32:12','2026-03-22 03:32:12'),(21,'Avena Integral','Avena integral natural ideal para desayunos saludables, rica en fibra y perfecta para una alimentación equilibrada.',1800.00,40,5,'GRA-AVENA','Avena 100% natural.','Rica en fibra\r\nMejora la digestión\r\nAporta energía sostenida\r\nAyuda a controlar el colesterol',0,NULL,'2026-03-22 03:37:18','2026-03-22 03:37:18'),(22,'Quinoa Orgánica','Quinoa orgánica considerada un superalimento por su alto contenido de proteínas y nutrientes esenciales.',3500.00,30,5,'GRA-QUINOA','Quinoa 100% natural.','Alta en proteína\r\nLibre de gluten\r\nRica en minerales\r\nIdeal para dietas saludables',0,NULL,'2026-03-22 03:39:06','2026-03-22 03:39:06'),(23,'Almendras','Almendras naturales ideales como snack saludable o complemento en diferentes comidas.',4000.00,25,5,'SEM-ALM','Almendras 100% naturales.','Grasas saludables\r\nFuente de proteína\r\nEnergía natural\r\nBenefician la salud del corazón',0,NULL,'2026-03-22 03:40:35','2026-03-22 03:40:35'),(24,'Semillas de Chia','Semillas de chía ricas en omega 3 y fibra, ideales para complementar una dieta balanceada.',2250.00,32,5,'SEM-CHIA','Semillas de chía 100% naturales.','Alta en omega 3\r\nMejora la digestión\r\nAporta energía\r\nAyuda a la saciedad',0,NULL,'2026-03-22 03:42:11','2026-03-22 03:42:11'),(25,'Ungüento de Árnica y Caléndula Herbarium','Ungüento natural elaborado con árnica y caléndula, ideal para aliviar dolores musculares, golpes e inflamaciones.',4500.00,20,5,'UNG-ARNICA-CAL','Árnica, caléndula, aceites naturales, cera.','Alivia dolores musculares\r\nReduce inflamación\r\nAyuda en golpes y moretones\r\nUso tópico natural',0,NULL,'2026-03-22 03:44:53','2026-03-22 03:44:53'),(26,'Ungüento de Baba de Caracol con Colágeno','Crema regeneradora a base de baba de caracol y colágeno que ayuda a mejorar la apariencia de la piel.',5000.00,13,5,'UNG-CARACOL','Extracto de baba de caracol, colágeno, componentes hidratantes.','Regenera la piel\r\nMejora elasticidad\r\nReduce manchas y cicatrices\r\nHidratación profunda',0,NULL,'2026-03-22 03:45:43','2026-03-24 08:45:44');
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -742,6 +740,81 @@ BEGIN
                       WHERE id_carrito = v_id_carrito) - descuento,
         updated_at = NOW()
     WHERE id_carrito = v_id_carrito;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_buscar_productos` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_buscar_productos`(
+    IN  p_busqueda       VARCHAR(200),
+    IN  p_categoria_slug VARCHAR(150),
+    IN  p_limite         INT,
+    IN  p_offset         INT,
+    OUT p_total          INT
+)
+BEGIN
+
+    -- ── 1. Contar total de registros coincidentes (para el paginador) ──────
+    SELECT COUNT(DISTINCT p.id_producto) INTO p_total
+    FROM productos p
+    LEFT JOIN producto_categoria pc ON pc.id_producto  = p.id_producto
+    LEFT JOIN categorias          c  ON c.id_categoria  = pc.id_categoria
+    WHERE p.deleted_at IS NULL
+      AND p.stock > 0
+      AND (
+            p_busqueda IS NULL OR p_busqueda = ''
+            OR p.nombre      LIKE CONCAT('%', p_busqueda, '%')
+            OR p.descripcion LIKE CONCAT('%', p_busqueda, '%')
+          )
+      AND (
+            p_categoria_slug IS NULL OR p_categoria_slug = ''
+            OR (c.slug = p_categoria_slug AND c.is_active = 1)
+          );
+
+    -- ── 2. Devolver página de resultados con imagen principal ─────────────
+    SELECT
+        p.id_producto,
+        p.nombre,
+        p.descripcion,
+        p.precio,
+        p.stock,
+        p.sku,
+        p.es_destacado,
+        p.created_at,
+        img.url      AS imagen_url,
+        img.alt_text AS imagen_alt
+    FROM productos p
+    LEFT JOIN producto_categoria pc  ON pc.id_producto  = p.id_producto
+    LEFT JOIN categorias          c  ON c.id_categoria  = pc.id_categoria
+    LEFT JOIN imagenes_productos  img ON img.id_producto = p.id_producto
+                                     AND img.es_principal = 1
+    WHERE p.deleted_at IS NULL
+      AND p.stock > 0
+      AND (
+            p_busqueda IS NULL OR p_busqueda = ''
+            OR p.nombre      LIKE CONCAT('%', p_busqueda, '%')
+            OR p.descripcion LIKE CONCAT('%', p_busqueda, '%')
+          )
+      AND (
+            p_categoria_slug IS NULL OR p_categoria_slug = ''
+            OR (c.slug = p_categoria_slug AND c.is_active = 1)
+          )
+    GROUP BY p.id_producto
+    ORDER BY p.nombre
+    LIMIT  p_limite
+    OFFSET p_offset;
 
 END ;;
 DELIMITER ;
@@ -1034,6 +1107,193 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_listar_pedidos_admin` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_listar_pedidos_admin`(
+    IN  p_busqueda  VARCHAR(200),
+    IN  p_id_estado INT,
+    IN  p_limite    INT,
+    IN  p_offset    INT,
+    OUT p_total     INT
+)
+BEGIN
+
+    -- ── 1. Contar total de pedidos coincidentes ───────────────────────────
+    SELECT COUNT(*) INTO p_total
+    FROM pedidos ped
+    INNER JOIN users u ON u.id_user = ped.id_user
+    WHERE ped.deleted_at IS NULL
+      AND (
+            p_busqueda IS NULL OR p_busqueda = ''
+            OR ped.num_pedido LIKE CONCAT('%', p_busqueda, '%')
+            OR u.nombre      LIKE CONCAT('%', p_busqueda, '%')
+          )
+      AND (p_id_estado IS NULL OR p_id_estado = 0 OR ped.id_estado_ped = p_id_estado);
+
+    -- ── 2. Devolver página de resultados ─────────────────────────────────
+    SELECT
+        ped.id_pedido,
+        ped.num_pedido,
+        ped.subtotal,
+        ped.impuesto,
+        ped.costo_envio,
+        ped.total,
+        ped.created_at,
+        ped.updated_at,
+        -- Datos del cliente
+        u.id_user           AS cliente_id,
+        u.nombre            AS cliente_nombre,
+        u.email             AS cliente_email,
+        -- Datos del estado
+        ep.id_estado_ped,
+        ep.nombre           AS estado_nombre,
+        ep.color            AS estado_color
+    FROM pedidos ped
+    INNER JOIN users          u  ON u.id_user       = ped.id_user
+    INNER JOIN estados_pedido ep ON ep.id_estado_ped = ped.id_estado_ped
+    WHERE ped.deleted_at IS NULL
+      AND (
+            p_busqueda IS NULL OR p_busqueda = ''
+            OR ped.num_pedido LIKE CONCAT('%', p_busqueda, '%')
+            OR u.nombre      LIKE CONCAT('%', p_busqueda, '%')
+          )
+      AND (p_id_estado IS NULL OR p_id_estado = 0 OR ped.id_estado_ped = p_id_estado)
+    ORDER BY ped.created_at DESC
+    LIMIT  p_limite
+    OFFSET p_offset;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_listar_productos_admin` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_listar_productos_admin`(
+    IN  p_busqueda VARCHAR(200),
+    IN  p_limite   INT,
+    IN  p_offset   INT,
+    OUT p_total    INT
+)
+BEGIN
+
+    -- ── 1. Contar total de productos coincidentes ─────────────────────────
+    SELECT COUNT(*) INTO p_total
+    FROM productos p
+    WHERE p.deleted_at IS NULL
+      AND (
+            p_busqueda IS NULL OR p_busqueda = ''
+            OR p.nombre LIKE CONCAT('%', p_busqueda, '%')
+            OR p.sku    LIKE CONCAT('%', p_busqueda, '%')
+          );
+
+    -- ── 2. Devolver página de resultados con imagen principal ─────────────
+    SELECT
+        p.id_producto,
+        p.nombre,
+        p.descripcion,
+        p.precio,
+        p.stock,
+        p.stock_minimo,
+        p.sku,
+        p.es_destacado,
+        p.created_at,
+        p.updated_at,
+        -- Imagen principal (NULL si no tiene)
+        img.id_img_prod AS imagen_id,
+        img.url         AS imagen_url,
+        img.alt_text    AS imagen_alt
+    FROM productos p
+    LEFT JOIN imagenes_productos img
+           ON img.id_producto  = p.id_producto
+          AND img.es_principal = 1
+    WHERE p.deleted_at IS NULL
+      AND (
+            p_busqueda IS NULL OR p_busqueda = ''
+            OR p.nombre LIKE CONCAT('%', p_busqueda, '%')
+            OR p.sku    LIKE CONCAT('%', p_busqueda, '%')
+          )
+    ORDER BY p.created_at DESC
+    LIMIT  p_limite
+    OFFSET p_offset;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_obtener_dashboard` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_dashboard`()
+BEGIN
+
+    SELECT
+        -- Usuarios activos (sin soft-delete)
+        (SELECT COUNT(*)
+         FROM users
+         WHERE is_active  = 1
+           AND deleted_at IS NULL)                                           AS total_usuarios,
+
+        -- Productos activos (sin soft-delete)
+        (SELECT COUNT(*)
+         FROM productos
+         WHERE deleted_at IS NULL)                                          AS total_productos,
+
+        -- Categorías activas
+        (SELECT COUNT(*)
+         FROM categorias
+         WHERE is_active = 1)                                               AS total_categorias,
+
+        -- Total de pedidos en el sistema
+        (SELECT COUNT(*)
+         FROM pedidos
+         WHERE deleted_at IS NULL)                                          AS total_pedidos,
+
+        -- Pedidos creados hoy
+        (SELECT COUNT(*)
+         FROM pedidos
+         WHERE DATE(created_at) = CURDATE()
+           AND deleted_at IS NULL)                                          AS pedidos_hoy,
+
+        -- Ingresos del mes actual (suma de totales)
+        (SELECT COALESCE(SUM(total), 0)
+         FROM pedidos
+         WHERE MONTH(created_at) = MONTH(NOW())
+           AND YEAR(created_at)  = YEAR(NOW())
+           AND deleted_at IS NULL)                                          AS ingresos_mes;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_vaciar_carrito` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1076,4 +1336,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-03-21 20:17:28
+-- Dump completed on 2026-04-06 20:54:02

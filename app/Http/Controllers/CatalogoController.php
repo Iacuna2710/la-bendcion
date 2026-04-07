@@ -5,17 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
  * CatalogoController
  *
- * Gestiona las vistas públicas del catálogo de productos (RF-05, RF-06, RF-07).
- * Accesible por visitantes y usuarios autenticados sin restricción de rol.
+ * Gestiona las vistas públicas del catálogo de productos.
  */
 class CatalogoController extends Controller
 {
-
     /**
      * Página de inicio con productos destacados y categorías activas.
      * Muestra los productos con es_destacado = true (máximo 8).
@@ -48,50 +48,87 @@ class CatalogoController extends Controller
 
     /**
      * Catálogo completo con búsqueda por nombre y filtro por categoría.
-     * Paginación de 12 productos por página.
-     *
-     * @param  \Illuminate\Http\Request  $request
+     * Implementa sp_buscar_productos para listado y paginación.
      */
     public function catalogo(Request $request): View
     {
-        $busqueda   = $request->input('buscar');
-        $categoriaSlug = $request->input('categoria');
+        $busqueda      = $request->input('buscar', '');
+        $categoriaSlug = $request->input('categoria', '');
+        $perPage       = 12;
+        $page          = max(1, (int) $request->input('page', 1));
+        $offset        = ($page - 1) * $perPage;
 
-        // Construye la consulta base
-        $query = Producto::with(['imagenPrincipal', 'categorias'])
-            ->where('stock', '>', 0);
+        DB::statement('SET @total_catalogo = 0');
 
-        // Filtro por búsqueda de texto
-        if ($busqueda) {
-            $query->where(function ($q) use ($busqueda) {
-                $q->where('nombre', 'like', "%{$busqueda}%")
-                  ->orWhere('descripcion', 'like', "%{$busqueda}%")
-                  ->orWhere('ingredientes', 'like', "%{$busqueda}%");
-            });
+        DB::select(
+            'CALL sp_buscar_productos(?, ?, ?, ?, @total_catalogo)',
+            [
+                $busqueda      ?: null,
+                $categoriaSlug ?: null,
+                $perPage,
+                $offset,
+            ]
+        );
+
+        $total = (int) DB::select('SELECT @total_catalogo AS total')[0]->total;
+
+        DB::statement('SET @total_catalogo = 0');
+        $filas = DB::select(
+            'CALL sp_buscar_productos(?, ?, ?, ?, @total_catalogo)',
+            [
+                $busqueda      ?: null,
+                $categoriaSlug ?: null,
+                $perPage,
+                $offset,
+            ]
+        );
+
+        $ids = collect($filas)->pluck('id_producto')->unique()->values()->toArray();
+
+        $categoriasPorProducto = [];
+        if (!empty($ids)) {
+            $cats = DB::select(
+                'SELECT pc.id_producto, c.id_categoria, c.nombre, c.slug
+                 FROM producto_categoria pc
+                 INNER JOIN categorias c ON c.id_categoria = pc.id_categoria
+                 WHERE c.is_active = 1
+                   AND pc.id_producto IN (' . implode(',', array_fill(0, count($ids), '?')) . ')',
+                $ids
+            );
+            foreach ($cats as $cat) {
+                $categoriasPorProducto[$cat->id_producto][] = $cat;
+            }
         }
 
-        // Filtro por categoría usando el slug
-        if ($categoriaSlug) {
-            $query->whereHas('categorias', function ($q) use ($categoriaSlug) {
-                $q->where('slug', $categoriaSlug)->where('is_active', true);
-            });
-        }
+        $items = collect($filas)->map(function ($fila) use ($categoriasPorProducto) {
+            $fila->imagenPrincipal = $fila->imagen_url
+                ? (object) [
+                    'url'      => $fila->imagen_url,
+                    'alt_text' => $fila->imagen_alt ?? $fila->nombre,
+                ]
+                : null;
 
-        // Ordena y pagina — mantiene filtros en la URL de paginación
-        $productos = $query->orderBy('nombre')
-            ->paginate(12)
-            ->appends([
-                'buscar'    => $busqueda,
-                'categoria' => $categoriaSlug,
-            ]);
+            $fila->categorias = collect($categoriasPorProducto[$fila->id_producto] ?? []);
 
-        // Categorías para el panel de filtros lateral
+            return $fila;
+        });
+
+        $productos = new LengthAwarePaginator(
+            $items,
+            $total,
+            $perPage,
+            $page,
+            [
+                'path'  => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
         $categorias = Categoria::where('is_active', true)
             ->withCount('productos')
             ->orderBy('nombre')
             ->get();
 
-        // Categoría actualmente seleccionada (para resaltarla en el filtro)
         $categoriaActual = $categoriaSlug
             ? Categoria::where('slug', $categoriaSlug)->first()
             : null;
@@ -104,12 +141,8 @@ class CatalogoController extends Controller
         ));
     }
 
-
     /**
-     * Muestra el detalle completo de un producto: nombre, precio, descripción,
-     * ingredientes, beneficios, imágenes y productos relacionados.
-     *
-     * @param  int  $id  PK del producto
+     * Muestra el detalle completo de un producto.
      */
     public function detalle(int $id): View
     {
@@ -121,7 +154,6 @@ class CatalogoController extends Controller
             ])
             ->findOrFail($id);
 
-        // Productos relacionados: mismas categorías, excluyendo el actual
         $categoriasIds = $producto->categorias->pluck('id_categoria');
 
         $relacionados = Producto::with(['imagenPrincipal'])

@@ -13,8 +13,8 @@
         <select name="estado" class="form-select form-select-sm" style="width:160px;">
             <option value="">Todos los estados</option>
             @foreach($estados as $estado)
-                <option value="{{ $estado->id_estado_pedido }}"
-                    {{ request('estado') == $estado->id_estado_pedido ? 'selected' : '' }}>
+                <option value="{{ $estado->id_estado_ped }}"
+                    {{ request('estado') == $estado->id_estado_ped ? 'selected' : '' }}>
                     {{ $estado->nombre }}
                 </option>
             @endforeach

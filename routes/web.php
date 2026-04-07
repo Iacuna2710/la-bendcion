@@ -2,42 +2,24 @@
 
 /**
  * Rutas de la plataforma La Bendición
- *
- * Organización:
- *  1. Rutas públicas (catálogo, inicio)
- *  2. Rutas de autenticación personalizada (contraseña temporal)
- *  3. Rutas del cliente (auth + role:cliente,trabajador,admin)
- *  4. Rutas del panel admin/trabajador (prefijo /admin, role:admin,trabajador)
- *  5. Rutas exclusivas del administrador (prefijo /admin, role:admin)
- *
- * Nota: Las rutas de Breeze (login, register, logout, forgot-password, reset-password)
- *       se mantienen intactas en routes/auth.php y no se modifican.
  */
 
 use Illuminate\Support\Facades\Route;
 
-// ---------------------------------------------------------------------------
 // Controladores públicos
-// ---------------------------------------------------------------------------
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ProductoController;
 
-// ---------------------------------------------------------------------------
-// Controladores de autenticación personalizada (contraseña temporal RF-04)
-// ---------------------------------------------------------------------------
+// Autenticación personalizada
 use App\Http\Controllers\Auth\PasswordTemporalController;
 
-// ---------------------------------------------------------------------------
-// Controladores del área de cliente
-// ---------------------------------------------------------------------------
+// Área de cliente
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\DireccionController;
 use App\Http\Controllers\FacturaController;
 
-// ---------------------------------------------------------------------------
-// Controladores del panel administrativo
-// ---------------------------------------------------------------------------
+// Panel administrativo
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductoAdminController;
 use App\Http\Controllers\Admin\CategoriaController;
@@ -46,35 +28,22 @@ use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Admin\RolController;
 use App\Http\Controllers\Admin\MetodoPagoController;
 
-// ===========================================================================
 // 1. RUTAS PÚBLICAS
-// ===========================================================================
 
-// Página de inicio — muestra el catálogo destacado
 Route::get('/', [CatalogoController::class, 'index'])->name('inicio');
-
-// Catálogo de productos con paginación y búsqueda (RF-05, RF-06)
 Route::get('/catalogo', [CatalogoController::class, 'catalogo'])->name('catalogo.index');
-
-// Detalle de un producto individual (RF-07)
 Route::get('/catalogo/{id}', [CatalogoController::class, 'detalle'])->name('catalogo.detalle');
 
-// ===========================================================================
-// 2. RUTA DE RESTABLECIMIENTO DE CONTRASEÑA PERSONALIZADA (RF-04)
-//    Estas rutas son complementarias a las de Breeze; manejan la
-//    contraseña temporal generada desde el panel.
-// ===========================================================================
+// 2. RECUPERACIÓN DE CONTRASEÑA
 Route::middleware('guest')->group(function () {
     // Formulario para solicitar el correo (pantalla ¿Olvidaste tu contraseña? personalizada)
     Route::get('/olvide-mi-password', [PasswordTemporalController::class, 'mostrarFormulario'])
         ->name('password.temporal.form');
 
-    // Procesar el correo y enviar la contraseña temporal
     Route::post('/olvide-mi-password', [PasswordTemporalController::class, 'enviarPasswordTemporal'])
         ->name('password.temporal.enviar');
 });
 
-// Formulario para establecer nueva contraseña (accesible solo con sesión activa)
 Route::middleware('auth')->group(function () {
     Route::get('/nueva-password', [PasswordTemporalController::class, 'mostrarFormularioNueva'])
         ->name('password.nueva.form');
@@ -83,11 +52,7 @@ Route::middleware('auth')->group(function () {
         ->name('password.nueva.actualizar');
 });
 
-// ===========================================================================
-// 3. RUTAS DEL ÁREA DE CLIENTE
-//    Protegidas con auth + role:cliente,trabajador,admin
-//    Los tres roles pueden acceder al área de cliente
-// ===========================================================================
+// 3. ÁREA DE CLIENTE
 Route::middleware(['auth', 'role:cliente,trabajador,admin'])->group(function () {
 
     // --- Carrito de compras (RF-08, RF-09) ---
@@ -115,14 +80,10 @@ Route::middleware(['auth', 'role:cliente,trabajador,admin'])->group(function () 
     Route::get('/api/cantones/{id_provincia}', [DireccionController::class, 'cantonesPorProvincia'])->name('api.cantones');
     Route::get('/api/distritos/{id_canton}', [DireccionController::class, 'distritosPorCanton'])->name('api.distritos');
 
-    // --- Facturas del cliente ---
     Route::get('/facturas/{id_factura}', [FacturaController::class, 'show'])->name('facturas.show');
 });
 
-// ===========================================================================
-// 4. RUTAS DEL PANEL ADMIN + TRABAJADOR
-//    Prefijo /admin, protegidas con auth + role:admin,trabajador
-// ===========================================================================
+// 4. PANEL ADMIN Y TRABAJADOR
 Route::prefix('admin')
     ->middleware(['auth', 'role:admin,trabajador'])
     ->name('admin.')
@@ -147,15 +108,11 @@ Route::prefix('admin')
             ->parameters(['pedidos' => 'id_pedido'])
             ->except(['create', 'store']);
 
-        // Ruta adicional: cambiar estado de un pedido y notificar al cliente
         Route::patch('pedidos/{id_pedido}/estado', [PedidoAdminController::class, 'cambiarEstado'])
             ->name('pedidos.estado');
     });
 
-// ===========================================================================
 // 5. RUTAS EXCLUSIVAS DEL ADMINISTRADOR
-//    Prefijo /admin, protegidas con auth + role:admin
-// ===========================================================================
 Route::prefix('admin')
     ->middleware(['auth', 'role:admin'])
     ->name('admin.')
@@ -185,19 +142,15 @@ Route::prefix('admin')
             ->parameters(['metodos-pago' => 'id_met_pago']);
     });
 
-// ===========================================================================
-// Rutas de perfil de Breeze (se conservan sin cambios)
-// ===========================================================================
+// Rutas de Perfil (Breeze)
 use App\Http\Controllers\ProfileController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
 });
 
-// ===========================================================================
-// Rutas de autenticación de Breeze (login, register, logout, etc.)
-// Se cargan desde routes/auth.php sin modificación alguna.
-// ===========================================================================
+// Rutas de Autenticación (Breeze)
 require __DIR__.'/auth.php';

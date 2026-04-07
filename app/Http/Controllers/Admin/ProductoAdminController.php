@@ -8,6 +8,8 @@ use App\Models\ImagenProducto;
 use App\Models\Producto;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -15,28 +17,55 @@ use Illuminate\View\View;
  * ProductoAdminController
  *
  * CRUD completo de productos para el panel administrativo.
- * Gestiona nombre, precio, stock, SKU, categorías e imágenes.
- * La eliminación es siempre lógica usando SoftDeletes (deleted_at).
  */
 class ProductoAdminController extends Controller
 {
     /**
      * Muestra listado paginado de productos con buscador.
+     * Usa sp_listar_productos_admin.
      */
     public function index(Request $request): View
     {
-        $busqueda = $request->input('buscar');
+        $busqueda = $request->input('buscar', '');
+        $perPage  = 15;
+        $page     = max(1, (int) $request->input('page', 1));
+        $offset   = ($page - 1) * $perPage;
 
-        $productos = Producto::with(['categorias', 'imagenPrincipal'])
-            ->when($busqueda, function ($query, $busqueda) {
-                $query->where('nombre', 'like', "%{$busqueda}%")
-                      ->orWhere('sku', 'like', "%{$busqueda}%");
-            })
-            ->orderByDesc('created_at')
-            ->paginate(15)
-            ->appends(['buscar' => $busqueda]);
+        DB::statement('SET @total_prod = 0');
 
-        // Alerta de stock bajo para el banner del listado
+        $filas = DB::select(
+            'CALL sp_listar_productos_admin(?, ?, ?, @total_prod)',
+            [
+                $busqueda ?: null,
+                $perPage,
+                $offset,
+            ]
+        );
+
+        $total = (int) DB::select('SELECT @total_prod AS total')[0]->total;
+
+        $items = collect($filas)->map(function ($fila) {
+            $fila->imagenPrincipal = $fila->imagen_url
+                ? (object) [
+                    'url'      => $fila->imagen_url,
+                    'alt_text' => $fila->imagen_alt ?? $fila->nombre,
+                ]
+                : null;
+
+            return $fila;
+        });
+
+        $productos = new LengthAwarePaginator(
+            $items,
+            $total,
+            $perPage,
+            $page,
+            [
+                'path'  => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
         $productosStockBajo = Producto::whereColumn('stock', '<=', 'stock_minimo')->count();
 
         return view('admin.productos.index', compact('productos', 'busqueda', 'productosStockBajo'));
@@ -53,15 +82,11 @@ class ProductoAdminController extends Controller
 
     /**
      * Valida y guarda un nuevo producto con sus categorías e imágenes.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
         $this->validarProducto($request);
 
-        // Crear el producto
         $producto = Producto::create([
             'nombre'       => $request->nombre,
             'descripcion'  => $request->descripcion,
@@ -88,6 +113,9 @@ class ProductoAdminController extends Controller
             ->with('success', "Producto «{$producto->nombre}» creado correctamente.");
     }
 
+    /**
+     * Redirige al formulario de edición (show no tiene vista propia).
+     */
     public function show(int $id_producto): RedirectResponse
     {
         return redirect()->route('admin.productos.edit', $id_producto);
@@ -95,9 +123,6 @@ class ProductoAdminController extends Controller
 
     /**
      * Muestra formulario para editar un producto existente.
-     *
-     * @param  int  $id_producto
-     * @return \Illuminate\View\View
      */
     public function edit(int $id_producto): View
     {
@@ -112,10 +137,6 @@ class ProductoAdminController extends Controller
 
     /**
      * Valida y actualiza los datos de un producto existente.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id_producto
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, int $id_producto): RedirectResponse
     {
@@ -148,7 +169,6 @@ class ProductoAdminController extends Controller
             foreach ($request->eliminar_imagenes as $idImg) {
                 $imagen = ImagenProducto::find($idImg);
                 if ($imagen && $imagen->id_producto === $producto->id_producto) {
-                    // Eliminar el archivo del disco si existe
                     if (Storage::disk('public')->exists($imagen->url)) {
                         Storage::disk('public')->delete($imagen->url);
                     }
@@ -170,18 +190,14 @@ class ProductoAdminController extends Controller
     }
 
     /**
-     * Realiza la eliminación lógica de un producto (soft delete con deleted_at).
-     *
-     * @param  int  $id_producto
-     * @return \Illuminate\Http\RedirectResponse
+     * Realiza la eliminación lógica de un producto.
      */
     public function destroy(int $id_producto): RedirectResponse
     {
         $producto = Producto::findOrFail($id_producto);
         $nombre   = $producto->nombre;
 
-        // SoftDelete: pone deleted_at, el registro permanece en la BD
-        $producto->delete();
+        $producto->delete(); // SoftDelete: pone deleted_at
 
         return redirect()->route('admin.productos.index')
             ->with('success', "Producto «{$nombre}» eliminado correctamente.");
@@ -189,10 +205,6 @@ class ProductoAdminController extends Controller
 
     /**
      * Valida los campos del formulario de producto.
-     * El SKU debe ser único, excluyendo el propio producto en edición.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int|null  $idExcluir  ID del producto a excluir en la validación de unicidad
      */
     private function validarProducto(Request $request, ?int $idExcluir = null): void
     {
@@ -215,26 +227,21 @@ class ProductoAdminController extends Controller
             'imagenes'     => ['nullable', 'array'],
             'imagenes.*'   => ['image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ], [
-            'nombre.required'   => 'El nombre del producto es obligatorio.',
-            'precio.required'   => 'El precio es obligatorio.',
-            'precio.min'        => 'El precio no puede ser negativo.',
-            'stock.required'    => 'El stock es obligatorio.',
+            'nombre.required'       => 'El nombre del producto es obligatorio.',
+            'precio.required'       => 'El precio es obligatorio.',
+            'precio.min'            => 'El precio no puede ser negativo.',
+            'stock.required'        => 'El stock es obligatorio.',
             'stock_minimo.required' => 'El stock mínimo es obligatorio.',
-            'imagenes.*.image'  => 'Solo se permiten archivos de imagen.',
-            'imagenes.*.max'    => 'Cada imagen no puede superar los 2 MB.',
+            'imagenes.*.image'      => 'Solo se permiten archivos de imagen.',
+            'imagenes.*.max'        => 'Cada imagen no puede superar los 2 MB.',
         ]);
     }
 
     /**
-     * Guarda las imágenes subidas y las registra en la tabla imagenes_productos.
-     * La primera imagen se marca como principal si el producto aún no tiene ninguna.
-     *
-     * @param  \App\Models\Producto  $producto
-     * @param  array  $archivos  Array de UploadedFile
+     * Guarda las imágenes subidas y las registra en imagenes_productos.
      */
     private function guardarImagenes(Producto $producto, array $archivos): void
     {
-        // ¿Ya tiene imagen principal?
         $tienePrincipal = ImagenProducto::where('id_producto', $producto->id_producto)
             ->where('es_principal', true)
             ->exists();
@@ -243,19 +250,16 @@ class ProductoAdminController extends Controller
 
         foreach ($archivos as $index => $archivo) {
             $orden++;
-            // Guardar en storage/app/public/productos/
             $ruta = $archivo->store('productos', 'public');
 
             ImagenProducto::create([
-                'id_producto' => $producto->id_producto,
-                'url'         => $ruta,
-                'alt_text'    => $producto->nombre,
-                'orden'       => $orden,
-                // Primera imagen nueva es principal si aún no hay ninguna
+                'id_producto'  => $producto->id_producto,
+                'url'          => $ruta,
+                'alt_text'     => $producto->nombre,
+                'orden'        => $orden,
                 'es_principal' => (!$tienePrincipal && $index === 0),
             ]);
 
-            // Marcar que ya existe una principal para las siguientes imágenes
             if (!$tienePrincipal && $index === 0) {
                 $tienePrincipal = true;
             }

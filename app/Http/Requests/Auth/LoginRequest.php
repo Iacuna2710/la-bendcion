@@ -27,13 +27,29 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email'    => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
     }
 
     /**
+     * Mensajes de validación en español.
+     * Se muestran cuando los campos del formulario de login no pasan validación.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required'    => 'El correo electrónico es obligatorio.',
+            'email.email'       => 'Ingresa un correo electrónico válido.',
+            'password.required' => 'La contraseña es obligatoria.',
+        ];
+    }
+
+    /**
      * Intenta autenticar las credenciales de la solicitud.
+     * Si las credenciales no coinciden, lanza un error de validación en español.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -53,7 +69,8 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Asegura que la solicitud de inicio de sesión no esté sujeta a limitación de velocidad.
+     * Asegura que la solicitud de inicio de sesión no esté sujeta a
+     * limitación de velocidad por demasiados intentos fallidos.
      *
      * @throws \Illuminate\Validation\ValidationException
      */

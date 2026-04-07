@@ -57,4 +57,25 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Actualiza la contraseña del usuario autenticado.
+     */
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', \Illuminate\Validation\Rules\Password::defaults(), 'confirmed'],
+        ], [
+            'current_password.current_password' => 'La contraseña actual no es correcta.',
+            'password.required' => 'La nueva contraseña es obligatoria.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+        ]);
+
+        $request->user()->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+        ]);
+
+        return back()->with('status', 'password-updated');
+    }
 }

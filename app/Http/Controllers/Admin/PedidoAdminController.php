@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Mail\CambioEstadoPedidoMail;
 use App\Models\EstadoPedido;
 use App\Models\Pedido;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
@@ -15,32 +17,69 @@ use Illuminate\View\View;
 /**
  * PedidoAdminController
  *
- * Gestiona los pedidos desde el panel administrativo (RF-16).
- * Permite ver, filtrar y actualizar el estado de los pedidos.
- * Al cambiar el estado llama a sp_cambiar_estado_pedido y notifica
- * al cliente por correo electrónico.
+ * Gestiona los pedidos desde el panel administrativo.
  */
 class PedidoAdminController extends Controller
 {
     /**
      * Muestra listado paginado de pedidos con filtros.
+     * Usa sp_listar_pedidos_admin.
      */
     public function index(Request $request): View
     {
-        $busqueda  = $request->input('buscar');
-        $estado    = $request->input('estado');
+        $busqueda = $request->input('buscar', '');
+        $estado   = (int) $request->input('estado', 0); // 0 = sin filtro de estado
+        $perPage  = 20;
+        $page     = max(1, (int) $request->input('page', 1));
+        $offset   = ($page - 1) * $perPage;
 
-        $pedidos = Pedido::with(['user', 'estadoPedido'])
-            ->when($busqueda, function ($query, $busqueda) {
-                $query->where('num_pedido', 'like', "%{$busqueda}%")
-                      ->orWhereHas('user', fn($q) => $q->where('nombre', 'like', "%{$busqueda}%"));
-            })
-            ->when($estado, function ($query, $estado) {
-                $query->where('id_estado_ped', $estado);
-            })
-            ->orderByDesc('created_at')
-            ->paginate(20)
-            ->appends(['buscar' => $busqueda, 'estado' => $estado]);
+        DB::statement('SET @total_pedidos = 0');
+
+        $filas = DB::select(
+            'CALL sp_listar_pedidos_admin(?, ?, ?, ?, @total_pedidos)',
+            [
+                $busqueda ?: null,
+                $estado   ?: null,
+                $perPage,
+                $offset,
+            ]
+        );
+
+        $total = (int) DB::select('SELECT @total_pedidos AS total')[0]->total;
+
+        $items = collect($filas)->map(function ($fila) {
+            // Objeto user sintético
+            $fila->user = (object) [
+                'nombre' => $fila->cliente_nombre,
+                'email'  => $fila->cliente_email,
+                'id_user' => $fila->cliente_id,
+            ];
+
+            // Objeto estadoPedido sintético
+            $fila->estadoPedido = (object) [
+                'id_estado_ped' => $fila->id_estado_ped,
+                'nombre'        => $fila->estado_nombre,
+                'color'         => $fila->estado_color,
+            ];
+
+            // Convertir created_at string → Carbon (para ->format() en la vista)
+            $fila->created_at = $fila->created_at
+                ? Carbon::parse($fila->created_at)
+                : null;
+
+            return $fila;
+        });
+
+        $pedidos = new LengthAwarePaginator(
+            $items,
+            $total,
+            $perPage,
+            $page,
+            [
+                'path'  => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
 
         $estados = EstadoPedido::where('is_active', true)->orderBy('orden')->get();
 
@@ -101,11 +140,6 @@ class PedidoAdminController extends Controller
 
     /**
      * Cambia estado de un pedido llamando al SP sp_cambiar_estado_pedido.
-     * Después notifica al cliente por correo electrónico con el nuevo estado.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id_pedido
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function cambiarEstado(Request $request, int $id_pedido): RedirectResponse
     {
@@ -118,17 +152,14 @@ class PedidoAdminController extends Controller
 
         $pedido = Pedido::with(['user', 'estadoPedido'])->findOrFail($id_pedido);
 
-        // Llamar al procedimiento almacenado sp_cambiar_estado_pedido
         DB::statement('CALL sp_cambiar_estado_pedido(?, ?)', [
             $id_pedido,
             $request->id_estado_ped,
         ]);
 
-        // Recargar el pedido para obtener el nuevo estado actualizado por el SP
         $pedido->refresh();
         $pedido->load('estadoPedido');
 
-        // Enviar correo de notificación al cliente
         if ($pedido->user && $pedido->user->email) {
             Mail::to($pedido->user->email)
                 ->send(new CambioEstadoPedidoMail($pedido));
